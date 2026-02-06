@@ -1,0 +1,6 @@
+<%= turbo_stream.append "icebreaker_#{@match_user.id}" do %>
+  <div class="ai-bubble rounded-2xl p-4 text-sm text-slate-800 animate-slide-up">
+    <p class="font-medium mb-1 text-amber-700">🤖 AI แนะนำ:</p>
+    <p class="text-slate-600"><%= @suggestion %></p>
+  </div>
+<% end %>

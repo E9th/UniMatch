@@ -1,0 +1,200 @@
+<!-- Edit Profile / Onboarding Page -->
+<div class="max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto px-4 md:px-6 lg:px-8 py-6">
+  <div class="animate-fade-in-up">
+    <!-- Header -->
+    <div class="text-center mb-6">
+      <div class="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden ring-4 ring-sky-100 mx-auto mb-4">
+        <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=<%= @user.name %>&backgroundColor=b6e3f4" alt="avatar" class="w-full h-full object-cover">
+      </div>
+      <h2 class="text-xl md:text-2xl font-bold text-gray-800">แนะนำตัวหน่อย</h2>
+      <p class="mt-1 text-gray-400 text-sm">กรอกข้อมูลให้ครบเพื่อจับคู่เพื่อนติว</p>
+    </div>
+
+    <!-- Errors -->
+    <% if @user.errors.any? %>
+      <div class="mb-5 bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl text-sm animate-slide-up">
+        <ul class="space-y-1">
+          <% @user.errors.full_messages.each do |msg| %>
+            <li class="flex items-center gap-2">
+              <i class="fa-solid fa-circle-exclamation flex-shrink-0 text-xs"></i>
+              <%= msg %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <!-- Form -->
+    <%= form_with model: @user, url: update_profile_path, method: :patch, class: "space-y-5 lg:space-y-6" do |f| %>
+      <!-- Name & Faculty + Subjects side by side on lg -->
+      <div class="lg:grid lg:grid-cols-2 lg:gap-6 space-y-5 lg:space-y-0">
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+          <h3 class="text-xs font-medium text-sky-600 uppercase tracking-wide flex items-center gap-2">
+            <i class="fa-solid fa-user"></i>
+            ข้อมูลพื้นฐาน
+          </h3>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1.5">ชื่อ</label>
+            <%= f.text_field :name,
+                class: "w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white text-sm",
+                placeholder: "ชื่อ-นามสกุล" %>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1.5">คณะ</label>
+            <div class="relative">
+              <%= f.select :faculty,
+                  options_for_select([
+                    "วิศวกรรมศาสตร์", "วิทยาศาสตร์", "อักษรศาสตร์", "นิติศาสตร์",
+                    "เศรษฐศาสตร์", "บริหารธุรกิจ", "แพทยศาสตร์", "เภสัชศาสตร์",
+                    "สถาปัตยกรรมศาสตร์", "ครุศาสตร์", "นิเทศศาสตร์", "รัฐศาสตร์",
+                    "สหเวชศาสตร์", "จิตวิทยา", "ทันตแพทยศาสตร์", "อื่นๆ"
+                  ], @user.faculty),
+                  { include_blank: "เลือกคณะ" },
+                  class: "appearance-none w-full px-4 py-3 pr-10 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white text-sm cursor-pointer" %>
+              <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+                <i class="fa-solid fa-chevron-down text-xs"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subjects -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+          <h3 class="text-xs font-medium text-sky-600 uppercase tracking-wide flex items-center gap-2">
+            <i class="fa-solid fa-book-open"></i>
+            วิชาเรียน
+          </h3>
+
+          <div>
+            <label class="block text-xs font-medium text-sky-600 mb-1.5 uppercase tracking-wide">
+              <i class="fa-solid fa-brain mr-1"></i> วิชาที่ถนัด
+            </label>
+            <div class="relative">
+              <%= f.select :strong_subject,
+                  options_for_select([
+                    "คณิตศาสตร์", "ฟิสิกส์", "เคมี", "ชีววิทยา",
+                    "ภาษาอังกฤษ", "ภาษาไทย", "สังคมศึกษา", "ประวัติศาสตร์",
+                    "คอมพิวเตอร์", "สถิติ", "เศรษฐศาสตร์", "การบัญชี",
+                    "กฎหมาย", "จิตวิทยา", "อื่นๆ"
+                  ], @user.strong_subject),
+                  { include_blank: "เลือกวิชาที่ถนัด" },
+                  class: "appearance-none w-full px-4 py-3 pr-10 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white text-sm cursor-pointer" %>
+              <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+                <i class="fa-solid fa-chevron-down text-xs"></i>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-red-500 mb-1.5 uppercase tracking-wide">
+              <i class="fa-solid fa-hand-holding-heart mr-1"></i> วิชาที่อยากให้ช่วย
+            </label>
+            <div class="relative">
+              <%= f.select :weak_subject,
+                  options_for_select([
+                    "คณิตศาสตร์", "ฟิสิกส์", "เคมี", "ชีววิทยา",
+                    "ภาษาอังกฤษ", "ภาษาไทย", "สังคมศึกษา", "ประวัติศาสตร์",
+                    "คอมพิวเตอร์", "สถิติ", "เศรษฐศาสตร์", "การบัญชี",
+                    "กฎหมาย", "จิตวิทยา", "อื่นๆ"
+                  ], @user.weak_subject),
+                  { include_blank: "เลือกวิชาที่ต้องการช่วยเหลือ" },
+                  class: "appearance-none w-full px-4 py-3 pr-10 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white text-sm cursor-pointer" %>
+              <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+                <i class="fa-solid fa-chevron-down text-xs"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Study Style + Time side by side on lg -->
+      <div class="lg:grid lg:grid-cols-2 lg:gap-6 space-y-5 lg:space-y-0">
+        <!-- Study Style -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h3 class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-book"></i>
+            สไตล์การเรียน
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <% [
+              ["fa-mug-hot", "สายชิล", "เรียนคนเดียว แล้วมาสอบถาม"],
+              ["fa-building-columns", "สายเนิร์ด", "เรียนเป็นกลุ่ม"],
+              ["fa-tv", "สายภาพ", "ดูวิดีโอ แล้วมาอภิปราย"],
+              ["fa-puzzle-piece", "สายโจทย์", "ทำโจทย์ด้วยกัน"],
+              ["fa-microphone", "สายสอน", "สอนกันไปมา"],
+              ["fa-file-lines", "สายสรุป", "อ่านหนังสือ แล้วมาสรุป"]
+            ].each do |icon, label, value| %>
+              <label class="cursor-pointer">
+                <input type="radio" name="user[study_style]" value="<%= value %>"
+                       class="peer hidden" <%= 'checked' if @user.study_style == value %>>
+                <div class="peer-checked:border-sky-400 peer-checked:bg-sky-50 peer-checked:ring-2 peer-checked:ring-sky-100 border-2 border-gray-200 rounded-xl p-3 text-center transition-all duration-200 hover:border-sky-300 hover:bg-sky-50/30">
+                  <div class="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <i class="fa-solid <%= icon %> text-gray-500"></i>
+                  </div>
+                  <span class="text-xs font-medium text-gray-700 block"><%= label %></span>
+                </div>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Available Time -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h3 class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-2">
+            <i class="fa-regular fa-clock"></i>
+            เวลาว่าง
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-3">
+            <% [
+              ["fa-sun", "เช้า", "เช้า (8:00-12:00)"],
+              ["fa-cloud-sun", "บ่าย", "บ่าย (12:00-16:00)"],
+              ["fa-cloud-moon", "เย็น", "เย็น (16:00-20:00)"],
+              ["fa-moon", "ค่ำ", "ค่ำ (20:00-24:00)"],
+            ].each do |icon, label, value| %>
+              <label class="cursor-pointer">
+                <input type="radio" name="user[available_time]" value="<%= value %>"
+                       class="peer hidden" <%= 'checked' if @user.available_time == value %>>
+                <div class="peer-checked:border-indigo-400 peer-checked:bg-indigo-50 peer-checked:ring-2 peer-checked:ring-indigo-100 border-2 border-gray-200 rounded-xl p-3 text-center transition-all duration-200 hover:border-indigo-300">
+                  <div class="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center mx-auto mb-1.5">
+                    <i class="fa-solid <%= icon %> text-gray-500 text-sm"></i>
+                  </div>
+                  <span class="text-xs font-medium text-gray-700"><%= label %></span>
+                </div>
+              </label>
+            <% end %>
+            <label class="cursor-pointer col-span-2 md:col-span-3 lg:col-span-2">
+              <input type="radio" name="user[available_time]" value="ยืดหยุ่น"
+                     class="peer hidden" <%= 'checked' if @user.available_time == "ยืดหยุ่น" %>>
+              <div class="peer-checked:border-indigo-400 peer-checked:bg-indigo-50 peer-checked:ring-2 peer-checked:ring-indigo-100 border-2 border-gray-200 rounded-xl p-3 text-center transition-all duration-200 hover:border-indigo-300 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate text-gray-500 text-sm"></i>
+                <span class="text-xs font-medium text-gray-700">ยืดหยุ่น</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bio -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <h3 class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-pen"></i>
+          แนะนำตัว
+        </h3>
+        <%= f.text_area :bio, rows: 3,
+            class: "w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white text-sm resize-none",
+            placeholder: "บอกเล่าเกี่ยวกับตัวคุณ สิ่งที่สนใจ..." %>
+      </div>
+
+      <!-- Sticky Save Button -->
+      <div class="sticky bottom-20 md:bottom-4 z-40 pt-2">
+        <button type="submit"
+                class="w-full py-4 px-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-lg shadow-sky-500/20 active:scale-95 transition-all text-sm flex items-center justify-center gap-2">
+          <i class="fa-solid fa-floppy-disk"></i>
+          บันทึกโปรไฟล์
+        </button>
+      </div>
+    <% end %>
+  </div>
+</div>

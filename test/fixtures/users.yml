@@ -1,0 +1,32 @@
+somchai:
+  name: "สมชาย ใจดี"
+  email: "somchai@test.com"
+  password_digest: <%= BCrypt::Password.create('password123') %>
+  faculty: "วิศวกรรมศาสตร์"
+  strong_subject: "คณิตศาสตร์"
+  weak_subject: "ภาษาอังกฤษ"
+  study_style: "ทำโจทย์ด้วยกัน"
+  available_time: "เย็น (16:00-20:00)"
+  bio: "ชอบคณิตมาก แต่อ่อนอังกฤษ"
+
+somying:
+  name: "สมหญิง รักเรียน"
+  email: "somying@test.com"
+  password_digest: <%= BCrypt::Password.create('password123') %>
+  faculty: "อักษรศาสตร์"
+  strong_subject: "ภาษาอังกฤษ"
+  weak_subject: "คณิตศาสตร์"
+  study_style: "สอนกันไปมา"
+  available_time: "เย็น (16:00-20:00)"
+  bio: "เก่งภาษา แต่ต้องการช่วยเรื่องคณิต"
+
+kitti:
+  name: "กิตติ คอมพิวเตอร์"
+  email: "kitti@test.com"
+  password_digest: <%= BCrypt::Password.create('password123') %>
+  faculty: "วิศวกรรมศาสตร์"
+  strong_subject: "คอมพิวเตอร์"
+  weak_subject: "ฟิสิกส์"
+  study_style: "สอนกันไปมา"
+  available_time: "ค่ำ (20:00-24:00)"
+  bio: "สาย Coding อยากเข้าใจ Physics"

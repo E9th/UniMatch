@@ -1,0 +1,93 @@
+<!-- Register Page -->
+<div class="min-h-screen flex items-center justify-center px-4 py-12 bg-white">
+  <div class="max-w-sm md:max-w-md w-full animate-fade-in-up">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="w-20 h-20 md:w-24 md:h-24 mx-auto bg-indigo-100 rounded-full flex items-center justify-center mb-5 shadow-sm">
+        <i class="fa-solid fa-rocket text-indigo-500 text-3xl md:text-4xl"></i>
+      </div>
+      <h2 class="text-2xl md:text-3xl font-bold text-gray-800">สร้างบัญชีใหม่</h2>
+      <p class="mt-1 text-gray-500 text-sm">เริ่มค้นหาเพื่อนติวกับ UniMatch</p>
+    </div>
+
+    <!-- Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-7">
+      <!-- Errors -->
+      <% if @user.errors.any? %>
+        <div class="mb-5 bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl text-sm animate-slide-up">
+          <ul class="space-y-1">
+            <% @user.errors.full_messages.each do |msg| %>
+              <li class="flex items-center gap-2">
+                <i class="fa-solid fa-circle-exclamation flex-shrink-0 text-xs"></i>
+                <%= msg %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%= form_with model: @user, url: register_path, method: :post, class: "space-y-4" do |f| %>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1.5">ชื่อ-นามสกุล</label>
+          <div class="relative">
+            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <%= f.text_field :name, required: true,
+                class: "w-full pl-11 pr-4 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all bg-white text-sm",
+                placeholder: "เช่น สมชาย ใจดี" %>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1.5">อีเมล</label>
+          <div class="relative">
+            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+            <%= f.email_field :email, required: true,
+                class: "w-full pl-11 pr-4 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all bg-white text-sm",
+                placeholder: "your.email@university.ac.th" %>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1.5">รหัสผ่าน</label>
+          <div class="relative">
+            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <i class="fa-solid fa-lock"></i>
+            </div>
+            <%= f.password_field :password, required: true,
+                class: "w-full pl-11 pr-4 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all bg-white text-sm",
+                placeholder: "อย่างน้อย 6 ตัวอักษร" %>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1.5">ยืนยันรหัสผ่าน</label>
+          <div class="relative">
+            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <i class="fa-solid fa-lock"></i>
+            </div>
+            <%= f.password_field :password_confirmation, required: true,
+                class: "w-full pl-11 pr-4 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-sky-500 focus:border-transparent outline-none transition-all bg-white text-sm",
+                placeholder: "พิมพ์รหัสผ่านอีกครั้ง" %>
+          </div>
+        </div>
+
+        <button type="submit"
+                class="w-full py-3.5 px-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-lg shadow-sky-500/20 active:scale-95 transition-all text-sm mt-2">
+          สมัครสมาชิก
+        </button>
+      <% end %>
+    </div>
+
+    <!-- Login Link -->
+    <div class="mt-6 text-center">
+      <p class="text-gray-400 text-sm">
+        มีบัญชีอยู่แล้ว?
+        <%= link_to "เข้าสู่ระบบ", login_path, class: "text-sky-500 font-semibold hover:text-sky-600" %>
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+somchai_in_human:
+  user: somchai
+  chat_room: human_room
+
+somying_in_human:
+  user: somying
+  chat_room: human_room
+
+somchai_in_ai:
+  user: somchai
+  chat_room: ai_room

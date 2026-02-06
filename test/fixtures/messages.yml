@@ -1,0 +1,11 @@
+user_message:
+  content: "สวัสดีครับ ฝากตัวด้วยนะ"
+  user: somchai
+  chat_room: human_room
+  role: "user"
+
+partner_message:
+  content: "สวัสดีค่ะ ยินดีเลย"
+  user: somying
+  chat_room: human_room
+  role: "user"

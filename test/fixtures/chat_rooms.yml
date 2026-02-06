@@ -1,0 +1,9 @@
+human_room:
+  name: "สมชาย & สมหญิง"
+  is_ai_mode: false
+  user: somchai
+
+ai_room:
+  name: "AI Assistant - สมชาย"
+  is_ai_mode: true
+  user: somchai
