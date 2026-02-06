@@ -30,5 +30,3 @@ services:
         value: 2
       - key: RAILS_MAX_THREADS
         value: 5
-      - key: SOLID_QUEUE_IN_PUMA
-        value: "1"
