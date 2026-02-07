@@ -32,11 +32,11 @@ class AiService
       request.body = {
         model: MODEL,
         messages: [
-          { role: "system", content: "คุณเป็นผู้ช่วย AI ที่ตอบเป็นภาษาไทย กระชับ เข้าใจง่าย เป็นกันเอง" },
+          { role: "system", content: "คุณเป็นเพื่อนติวในมหาวิทยาลัย ชื่อ \"น้องAI\" พูดไทยแบบวัยรุ่น เป็นกันเอง ใช้คำสั้นๆ ไม่เกิน 2-3 ประโยคต่อข้อความ ห้ามตอบยาว ห้ามใช้หัวข้อ ห้ามใช้ bullet point ถ้าเป็นคำถามเรื่องเรียนให้อธิบายง่ายๆ เหมือนเพื่อนสอนเพื่อน ใส่อีโมจิบ้างเล็กน้อย" },
           { role: "user", content: prompt }
         ],
-        max_tokens: 1024,
-        temperature: 0.7
+        max_tokens: 256,
+        temperature: 0.8
       }.to_json
 
       response = http.request(request)
@@ -70,24 +70,10 @@ class AiService
   # สร้าง Icebreaker สำหรับคู่ Match
   def generate_icebreaker(current_user, match_user)
     prompt = <<~PROMPT
-      คุณเป็นผู้ช่วย AI ของแอป UniMatch ซึ่งเป็นแอปจับคู่เพื่อนติว
-
-      ข้อมูลผู้ใช้ปัจจุบัน:
-      - ชื่อ: #{current_user.name}
-      - คณะ: #{current_user.faculty}
-      - วิชาที่ถนัด: #{current_user.strong_subject}
-      - วิชาที่อ่อน: #{current_user.weak_subject}
-      - สไตล์การเรียน: #{current_user.study_style}
-
-      ข้อมูลเพื่อนที่ Match:
-      - ชื่อ: #{match_user.name}
-      - คณะ: #{match_user.faculty}
-      - วิชาที่ถนัด: #{match_user.strong_subject}
-      - วิชาที่อ่อน: #{match_user.weak_subject}
-      - สไตล์การเรียน: #{match_user.study_style}
-
-      ช่วยคิดคำทักทายที่เป็นกันเองและน่าสนใจ เพื่อเริ่มต้นบทสนทนากับเพื่อนติวคนนี้
-      พร้อมแนะนำวิธีที่ทั้งสองคนจะช่วยกันเรียนได้ ตอบเป็นภาษาไทย สั้นๆ กระชับ 2-3 ประโยค
+      ช่วยคิดคำทักทายสั้นๆ 1-2 ประโยค เป็นกันเอง เหมือนเพื่อนในมหาลัยทักกัน
+      เราชื่อ#{current_user.name} (คณะ#{current_user.faculty} ถนัด#{current_user.strong_subject} อ่อน#{current_user.weak_subject})
+      จะทักเพื่อนคณะ#{match_user.faculty} ที่ถนัด#{match_user.strong_subject}
+      ให้มันดูเป็นธรรมชาติ ไม่เป็นทางการ ใส่อีโมจิได้นิดหน่อย
     PROMPT
 
     chat(prompt)
@@ -96,18 +82,9 @@ class AiService
   # AI Chat สำหรับถามคำถามเรื่องการเรียน
   def study_chat(user_message, user)
     prompt = <<~PROMPT
-      คุณเป็นผู้ช่วยติวเตอร์ AI ของแอป UniMatch
-      คุณช่วยตอบคำถามเรื่องการเรียน ให้คำแนะนำ และช่วยอธิบายเนื้อหาวิชาต่างๆ
-
-      ข้อมูลนักศึกษา:
-      - ชื่อ: #{user&.name}
-      - คณะ: #{user&.faculty}
-      - วิชาที่ถนัด: #{user&.strong_subject}
-      - วิชาที่อ่อน: #{user&.weak_subject}
-
-      คำถาม/ข้อความจากนักศึกษา: #{user_message}
-
-      ตอบเป็นภาษาไทย กระชับ เข้าใจง่าย ถ้าเป็นคำถามเรื่องเรียนให้อธิบายอย่างละเอียด
+      เพื่อนชื่อ#{user&.name} คณะ#{user&.faculty} (ถนัด#{user&.strong_subject} อ่อน#{user&.weak_subject}) ส่งข้อความมาว่า:
+      "#{user_message}"
+      ตอบสั้นๆ เป็นกันเอง เหมือนเพื่อนคุยกัน ถ้าเป็นคำถามวิชาการให้อธิบายง่ายๆ พอเข้าใจ ไม่ต้องยาว
     PROMPT
 
     chat(prompt)
