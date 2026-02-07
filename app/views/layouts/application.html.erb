@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="th" class="h-full">
   <head>
+    <meta charset="utf-8">
     <title><%= content_for(:title) || "UniMatch - จับคู่เพื่อนติว" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="description" content="UniMatch — แพลตฟอร์มจับคู่เพื่อนติวสำหรับนักศึกษา ค้นหาบัดดี้ที่เหมาะกับสไตล์การเรียนของคุณ">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="UniMatch">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0ea5e9">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="UniMatch - จับคู่เพื่อนติว">
+    <meta property="og:description" content="แพลตฟอร์มจับคู่เพื่อนติวสำหรับนักศึกษา พร้อม AI ติวเตอร์">
+    <meta property="og:type" content="website">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
