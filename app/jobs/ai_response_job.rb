@@ -6,8 +6,8 @@ class AiResponseJob < ApplicationJob
     chat_room = user_message.chat_room
     user = user_message.user
 
-    # เรียก Gemini Service
-    ai_reply_text = GeminiService.new.study_chat(user_message.content, user)
+    # เรียก AI Service (Groq)
+    ai_reply_text = AiService.new.study_chat(user_message.content, user)
 
     # บันทึกคำตอบ AI
     Message.create!(

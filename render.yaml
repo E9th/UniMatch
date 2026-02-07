@@ -22,11 +22,11 @@ services:
         sync: false
       - key: SECRET_KEY_BASE
         generateValue: true
-      - key: GEMINI_API_KEY
+      - key: GROQ_API_KEY
         sync: false
       - key: RAILS_LOG_LEVEL
         value: info
       - key: WEB_CONCURRENCY
-        value: 2
+        value: 0
       - key: RAILS_MAX_THREADS
         value: 5

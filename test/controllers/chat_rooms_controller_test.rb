@@ -152,4 +152,58 @@ class ChatRoomsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match @somying.name, response.body
   end
+
+  # ==================== Partner Profile ====================
+
+  test "partner profile requires login" do
+    get partner_profile_chat_room_path(@human_room)
+    assert_redirected_to login_path
+  end
+
+  test "partner profile loads for member" do
+    sign_in_as(@somchai)
+    get partner_profile_chat_room_path(@human_room)
+    assert_response :success
+    assert_match(/วิชาที่ถนัด/, response.body)
+  end
+
+  test "partner profile redirects non-member" do
+    sign_in_as(@kitti)
+    get partner_profile_chat_room_path(@human_room)
+    assert_redirected_to chat_rooms_path
+  end
+
+  test "partner profile redirects for AI room" do
+    sign_in_as(@somchai)
+    get partner_profile_chat_room_path(@ai_room)
+    assert_redirected_to chat_room_path(@ai_room)
+  end
+
+  test "partner profile shows revealed name" do
+    membership = ChatRoomMembership.find_by(user: @somying, chat_room: @human_room)
+    membership.update!(identity_revealed: true)
+
+    sign_in_as(@somchai)
+    get partner_profile_chat_room_path(@human_room)
+    assert_response :success
+    assert_match @somying.name, response.body
+  end
+
+  test "partner profile shows anonymous when not revealed" do
+    sign_in_as(@somchai)
+    get partner_profile_chat_room_path(@human_room)
+    assert_response :success
+    assert_match(/เพื่อนติวปริศนา/, response.body)
+  end
+
+  # ==================== Read Receipts ====================
+
+  test "show updates last_read_at for current user" do
+    sign_in_as(@somchai)
+    get chat_room_path(@human_room)
+    assert_response :success
+
+    membership = ChatRoomMembership.find_by(user: @somchai, chat_room: @human_room)
+    assert_not_nil membership.last_read_at
+  end
 end

@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   resources :chat_rooms, only: [:index, :show] do
     member do
       post :reveal_identity
+      get :partner_profile
     end
     resources :messages, only: [:create]
     resources :reviews, only: [:create]

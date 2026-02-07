@@ -9,7 +9,7 @@ class MatchesController < ApplicationController
   def icebreaker
     @match_user = User.find(params[:id])
 
-    prompt_service = GeminiService.new
+    prompt_service = AiService.new
     @suggestion = prompt_service.generate_icebreaker(current_user, @match_user)
 
     respond_to do |format|

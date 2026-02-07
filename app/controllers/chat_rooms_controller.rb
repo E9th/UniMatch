@@ -25,6 +25,13 @@ class ChatRoomsController < ApplicationController
       @my_review = Review.find_by(reviewer: current_user, chat_room: @chat_room)
       @other_user_avg_rating = @other_user&.average_rating || 0.0
       @other_user_review_count = @other_user&.review_count || 0
+
+      # Read receipts
+      @other_membership = @chat_room.chat_room_memberships.find_by(user: @other_user) if @other_user
+      @other_last_read_at = @other_membership&.last_read_at
+
+      # Mark current user as having read
+      @my_membership&.update_column(:last_read_at, Time.current)
     end
   end
 
@@ -33,6 +40,29 @@ class ChatRoomsController < ApplicationController
     room = current_user.ai_chat_room
     ChatRoomMembership.find_or_create_by!(user: current_user, chat_room: room)
     redirect_to chat_room_path(room)
+  end
+
+  # ดูโปรไฟล์คู่สนทนา
+  def partner_profile
+    @chat_room = ChatRoom.find(params[:id])
+
+    unless @chat_room.members.include?(current_user) || @chat_room.user == current_user
+      redirect_to chat_rooms_path, alert: "คุณไม่มีสิทธิ์เข้าถึง"
+      return
+    end
+
+    if @chat_room.is_ai_mode?
+      redirect_to chat_room_path(@chat_room)
+      return
+    end
+
+    @other_user = @chat_room.other_member(current_user)
+    unless @other_user
+      redirect_to chat_room_path(@chat_room), alert: "ไม่พบข้อมูลคู่สนทนา"
+      return
+    end
+
+    @other_revealed = @chat_room.identity_revealed?(@other_user)
   end
 
   # เปิดเผยตัวตน

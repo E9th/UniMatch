@@ -6,48 +6,58 @@
       <%= link_to chat_rooms_path, class: "text-gray-400 hover:text-sky-500 transition-colors p-1" do %>
         <i class="fa-solid fa-arrow-left"></i>
       <% end %>
-      <div class="relative">
-        <div class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-50">
-          <% if @chat_room.is_ai_mode? %>
+      <% if @chat_room.is_ai_mode? %>
+        <%# AI room — not clickable %>
+        <div class="relative">
+          <div class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-50">
             <div class="w-full h-full bg-amber-500 flex items-center justify-center">
               <i class="fa-solid fa-robot text-white"></i>
             </div>
-          <% elsif @other_user && @other_revealed %>
-            <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=<%= @other_user.name %>&backgroundColor=b6e3f4" alt="avatar" class="w-full h-full object-cover">
-          <% else %>
-            <img src="https://api.dicebear.com/9.x/shapes/svg?seed=buddy<%= @chat_room.id %>&backgroundColor=e0e7ff" alt="avatar" class="w-full h-full object-cover">
-          <% end %>
+          </div>
         </div>
-        <% unless @chat_room.is_ai_mode? %>
-          <div class="status-online absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full ring-2 ring-white"></div>
+        <div>
+          <h2 class="font-semibold text-gray-800 text-sm md:text-base">AI ติวเตอร์</h2>
+          <p class="text-[10px] text-gray-400">
+            <i class="fa-solid fa-wand-magic-sparkles text-sky-400 mr-1"></i>Powered by AI
+          </p>
+        </div>
+      <% else %>
+        <%# Peer room — clickable to view partner profile %>
+        <%= link_to partner_profile_chat_room_path(@chat_room), class: "flex items-center gap-3 hover:opacity-80 transition-opacity" do %>
+          <div class="relative">
+            <div class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-50">
+              <% if @other_user && @other_revealed %>
+                <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=<%= @other_user.name %>&backgroundColor=b6e3f4" alt="avatar" class="w-full h-full object-cover">
+              <% else %>
+                <img src="https://api.dicebear.com/9.x/shapes/svg?seed=buddy<%= @chat_room.id %>&backgroundColor=e0e7ff" alt="avatar" class="w-full h-full object-cover">
+              <% end %>
+            </div>
+            <div class="status-online absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full ring-2 ring-white"></div>
+          </div>
+          <div>
+            <h2 class="font-semibold text-gray-800 text-sm md:text-base">
+              <% if @other_user && @other_revealed %>
+                <%= @other_user.name %>
+              <% else %>
+                เพื่อนติวปริศนา
+              <% end %>
+            </h2>
+            <p class="text-[10px] text-gray-400">
+              <% if @other_user && @other_revealed %>
+                <span class="text-sky-500">
+                  <i class="fa-solid fa-building text-sky-400 text-[8px] mr-0.5"></i>
+                  คณะ<%= @other_user.faculty %>
+                </span>
+              <% else %>
+                <span class="text-sky-500 flex items-center gap-0.5">
+                  <i class="fa-solid fa-address-card text-[8px]"></i>
+                  แตะเพื่อดูโปรไฟล์
+                </span>
+              <% end %>
+            </p>
+          </div>
         <% end %>
-      </div>
-      <div>
-        <h2 class="font-semibold text-gray-800 text-sm md:text-base">
-          <% if @chat_room.is_ai_mode? %>
-            AI ติวเตอร์
-          <% elsif @other_user && @other_revealed %>
-            <%= @other_user.name %>
-          <% else %>
-            เพื่อนติวปริศนา
-          <% end %>
-        </h2>
-        <p class="text-[10px] text-gray-400">
-          <% if @chat_room.is_ai_mode? %>
-            <i class="fa-solid fa-wand-magic-sparkles text-sky-400 mr-1"></i>Powered by Gemini AI
-          <% elsif @other_user && @other_revealed %>
-            <span class="text-sky-500">
-              <i class="fa-solid fa-building text-sky-400 text-[8px] mr-0.5"></i>
-              คณะ<%= @other_user.faculty %>
-            </span>
-          <% else %>
-            <span class="text-green-500 flex items-center gap-0.5">
-              <span class="w-1.5 h-1.5 bg-green-400 rounded-full inline-block"></span>
-              กำลังออนไลน์
-            </span>
-          <% end %>
-        </p>
-      </div>
+      <% end %>
     </div>
 
     <% unless @chat_room.is_ai_mode? %>
@@ -89,6 +99,17 @@
     <div id="messages" class="space-y-3" data-chat-scroll-target="messages">
       <% @messages.each do |message| %>
         <%= render partial: "messages/message", locals: { message: message } %>
+      <% end %>
+
+      <%# Read receipt indicator %>
+      <% unless @chat_room.is_ai_mode? %>
+        <% last_my_msg = @messages.select { |m| m.user_id == current_user.id }.last %>
+        <% if last_my_msg && @other_last_read_at.present? && @other_last_read_at >= last_my_msg.created_at %>
+          <div class="flex justify-end items-center gap-1 text-[10px] text-sky-400 pr-1 mt-0.5" id="read-receipt">
+            <i class="fa-solid fa-check-double"></i>
+            <span>อ่านแล้ว</span>
+          </div>
+        <% end %>
       <% end %>
     </div>
   </div>
