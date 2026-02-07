@@ -110,4 +110,46 @@ class ChatRoomsControllerTest < ActionDispatch::IntegrationTest
       post create_ai_chat_path
     end
   end
+
+  # ==================== Reveal Identity ====================
+
+  test "reveal identity requires login" do
+    post reveal_identity_chat_room_path(@human_room)
+    assert_redirected_to login_path
+  end
+
+  test "reveal identity updates membership" do
+    sign_in_as(@somchai)
+    membership = ChatRoomMembership.find_by(user: @somchai, chat_room: @human_room)
+    assert_not membership.identity_revealed?
+
+    post reveal_identity_chat_room_path(@human_room)
+    assert_redirected_to chat_room_path(@human_room)
+
+    membership.reload
+    assert membership.identity_revealed?
+  end
+
+  test "reveal identity creates system message" do
+    sign_in_as(@somchai)
+
+    assert_difference("Message.count", 1) do
+      post reveal_identity_chat_room_path(@human_room)
+    end
+
+    last_msg = @human_room.messages.last
+    assert_equal "system", last_msg.role
+    assert_match @somchai.name, last_msg.content
+  end
+
+  test "show displays revealed name when other member revealed" do
+    # Make somying reveal her identity
+    membership = ChatRoomMembership.find_by(user: @somying, chat_room: @human_room)
+    membership.update!(identity_revealed: true)
+
+    sign_in_as(@somchai)
+    get chat_room_path(@human_room)
+    assert_response :success
+    assert_match @somying.name, response.body
+  end
 end

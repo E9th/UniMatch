@@ -1,5 +1,5 @@
 <!-- Chat Room -->
-<div class="max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] flex flex-col">
+<div class="max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] flex flex-col" data-controller="chat-scroll">
   <!-- Chat Header -->
   <div class="bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between z-10 shadow-sm">
     <div class="flex items-center gap-3">
@@ -12,6 +12,8 @@
             <div class="w-full h-full bg-amber-500 flex items-center justify-center">
               <i class="fa-solid fa-robot text-white"></i>
             </div>
+          <% elsif @other_user && @other_revealed %>
+            <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=<%= @other_user.name %>&backgroundColor=b6e3f4" alt="avatar" class="w-full h-full object-cover">
           <% else %>
             <img src="https://api.dicebear.com/9.x/shapes/svg?seed=buddy<%= @chat_room.id %>&backgroundColor=e0e7ff" alt="avatar" class="w-full h-full object-cover">
           <% end %>
@@ -22,11 +24,22 @@
       </div>
       <div>
         <h2 class="font-semibold text-gray-800 text-sm md:text-base">
-          <%= @chat_room.is_ai_mode? ? 'AI ติวเตอร์' : 'เพื่อนติวปริศนา' %>
+          <% if @chat_room.is_ai_mode? %>
+            AI ติวเตอร์
+          <% elsif @other_user && @other_revealed %>
+            <%= @other_user.name %>
+          <% else %>
+            เพื่อนติวปริศนา
+          <% end %>
         </h2>
         <p class="text-[10px] text-gray-400">
           <% if @chat_room.is_ai_mode? %>
             <i class="fa-solid fa-wand-magic-sparkles text-sky-400 mr-1"></i>Powered by Gemini AI
+          <% elsif @other_user && @other_revealed %>
+            <span class="text-sky-500">
+              <i class="fa-solid fa-building text-sky-400 text-[8px] mr-0.5"></i>
+              คณะ<%= @other_user.faculty %>
+            </span>
           <% else %>
             <span class="text-green-500 flex items-center gap-0.5">
               <span class="w-1.5 h-1.5 bg-green-400 rounded-full inline-block"></span>
@@ -38,15 +51,22 @@
     </div>
 
     <% unless @chat_room.is_ai_mode? %>
-      <button class="px-3 py-1.5 bg-gray-50 hover:bg-sky-50 text-gray-500 hover:text-sky-600 rounded-lg text-xs font-medium transition-colors border border-gray-200 flex items-center gap-1.5" onclick="Swal.fire({title:'เปิดเผยตัวตน?',text:'คู่สนทนาจะเห็นชื่อและรูปโปรไฟล์จริงของคุณ',icon:'warning',showCancelButton:true,confirmButtonText:'ยืนยัน',cancelButtonText:'ยกเลิก',confirmButtonColor:'#0ea5e9'})">
-        <i class="fa-solid fa-eye"></i>
-        เปิดเผย
-      </button>
+      <% if @my_membership&.identity_revealed? %>
+        <span class="px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-xs font-medium border border-green-200 flex items-center gap-1.5">
+          <i class="fa-solid fa-check-circle"></i>
+          เปิดเผยแล้ว
+        </span>
+      <% else %>
+        <%= button_to reveal_identity_chat_room_path(@chat_room), method: :post, class: "px-3 py-1.5 bg-gray-50 hover:bg-sky-50 text-gray-500 hover:text-sky-600 rounded-lg text-xs font-medium transition-colors border border-gray-200 flex items-center gap-1.5", data: { turbo_confirm: "เปิดเผยตัวตน?\nคู่สนทนาจะเห็นชื่อและรูปโปรไฟล์จริงของคุณ" } do %>
+          <i class="fa-solid fa-eye"></i>
+          เปิดเผย
+        <% end %>
+      <% end %>
     <% end %>
   </div>
 
   <!-- Messages Container -->
-  <div class="flex-1 bg-gray-50 overflow-y-auto no-scrollbar px-4 py-4" id="messages-container">
+  <div class="flex-1 bg-gray-50 overflow-y-auto no-scrollbar px-4 py-4" id="messages-container" data-chat-scroll-target="container">
     <!-- Welcome message -->
     <% if @messages.empty? %>
       <div class="text-center py-16 animate-fade-in-up">
@@ -66,7 +86,7 @@
       </div>
     <% end %>
 
-    <div id="messages" class="space-y-3">
+    <div id="messages" class="space-y-3" data-chat-scroll-target="messages">
       <% @messages.each do |message| %>
         <%= render partial: "messages/message", locals: { message: message } %>
       <% end %>
@@ -84,16 +104,4 @@
   </div>
 </div>
 
-<script>
-  const container = document.getElementById('messages-container');
-  if (container) {
-    container.scrollTop = container.scrollHeight;
-    const observer = new MutationObserver(() => {
-      container.scrollTop = container.scrollHeight;
-    });
-    const messages = document.getElementById('messages');
-    if (messages) {
-      observer.observe(messages, { childList: true });
-    }
-  }
-</script>
+

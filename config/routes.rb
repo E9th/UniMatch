@@ -30,6 +30,9 @@ Rails.application.routes.draw do
 
   # Chat
   resources :chat_rooms, only: [:index, :show] do
+    member do
+      post :reveal_identity
+    end
     resources :messages, only: [:create]
   end
   post "chat_rooms/ai", to: "chat_rooms#create_ai_room", as: :create_ai_chat

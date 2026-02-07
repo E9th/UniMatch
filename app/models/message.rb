@@ -3,7 +3,7 @@ class Message < ApplicationRecord
   belongs_to :chat_room
 
   validates :content, presence: true
-  validates :role, inclusion: { in: %w[user assistant] }
+  validates :role, inclusion: { in: %w[user assistant system] }
 
   # Default role
   after_initialize do
@@ -20,6 +20,10 @@ class Message < ApplicationRecord
 
   def from_ai?
     role == "assistant"
+  end
+
+  def system_message?
+    role == "system"
   end
 
   def sender_name

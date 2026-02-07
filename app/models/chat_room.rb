@@ -15,4 +15,14 @@ class ChatRoom < ApplicationRecord
   def last_message
     messages.order(created_at: :desc).first
   end
+
+  # ดูว่าผู้ใช้เปิดเผยตัวตนแล้วหรือยัง
+  def identity_revealed?(user)
+    chat_room_memberships.find_by(user: user)&.identity_revealed?
+  end
+
+  # หาสมาชิกอีกคน (สำหรับ peer chat)
+  def other_member(user)
+    members.where.not(id: user.id).first
+  end
 end

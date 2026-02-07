@@ -16,6 +16,13 @@ class ChatRoomsController < ApplicationController
 
     @messages = @chat_room.messages.order(created_at: :asc)
     @message = Message.new
+
+    # เตรียมข้อมูลสำหรับ reveal identity
+    unless @chat_room.is_ai_mode?
+      @my_membership = @chat_room.chat_room_memberships.find_by(user: current_user)
+      @other_user = @chat_room.other_member(current_user)
+      @other_revealed = @chat_room.identity_revealed?(@other_user) if @other_user
+    end
   end
 
   # สร้าง AI Chat Room
@@ -23,5 +30,27 @@ class ChatRoomsController < ApplicationController
     room = current_user.ai_chat_room
     ChatRoomMembership.find_or_create_by!(user: current_user, chat_room: room)
     redirect_to chat_room_path(room)
+  end
+
+  # เปิดเผยตัวตน
+  def reveal_identity
+    @chat_room = ChatRoom.find(params[:id])
+    membership = @chat_room.chat_room_memberships.find_by(user: current_user)
+
+    if membership
+      membership.update!(identity_revealed: true)
+
+      # ส่งข้อความแจ้งในห้องแชท
+      Message.create!(
+        chat_room: @chat_room,
+        user: nil,
+        content: "🎉 #{current_user.name} ได้เปิดเผยตัวตนแล้ว!",
+        role: "system"
+      )
+
+      redirect_to chat_room_path(@chat_room), notice: "เปิดเผยตัวตนสำเร็จ!"
+    else
+      redirect_to chat_room_path(@chat_room), alert: "ไม่สามารถดำเนินการได้"
+    end
   end
 end

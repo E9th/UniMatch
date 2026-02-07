@@ -1,37 +1,49 @@
-<!-- Single Message Bubble -->
-<div class="flex <%= message.from_ai? ? 'justify-start' : (message.user_id == current_user&.id ? 'justify-end' : 'justify-start') %> animate-slide-up" id="<%= dom_id(message) %>">
-  <div class="max-w-[80%] md:max-w-[65%] lg:max-w-[55%] flex gap-2 <%= message.user_id == current_user&.id ? 'flex-row-reverse' : '' %>">
-    <!-- Avatar (for AI or other user) -->
-    <% unless message.user_id == current_user&.id %>
-      <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-5 overflow-hidden">
-        <% if message.from_ai? %>
-          <div class="w-full h-full bg-amber-500 flex items-center justify-center">
-            <i class="fa-solid fa-robot text-white text-xs"></i>
-          </div>
-        <% else %>
-          <img src="https://api.dicebear.com/9.x/shapes/svg?seed=buddy<%= message.chat_room_id %>&backgroundColor=e0e7ff" alt="avatar" class="w-full h-full object-cover">
-        <% end %>
-      </div>
-    <% end %>
+<%# Handle broadcast context where current_user helper returns nil (no session) %>
+<% viewing_user_id = (current_user&.id rescue nil) %>
 
-    <div>
-      <!-- Sender name & time -->
-      <p class="text-[10px] text-gray-400 mb-1 px-1 <%= message.user_id == current_user&.id ? 'text-right' : '' %>">
-        <%= message.from_ai? ? 'AI ติวเตอร์' : (message.user&.name || 'เพื่อนติว') %>
-        <span class="ml-1"><%= message.created_at.strftime("%H:%M") %></span>
-      </p>
+<% if message.system_message? %>
+  <!-- System Message (e.g., identity reveal) -->
+  <div class="flex justify-center animate-slide-up my-2" id="<%= dom_id(message) %>">
+    <span class="bg-sky-50 text-sky-600 border border-sky-200 px-4 py-1.5 rounded-full text-xs font-medium">
+      <%= message.content %>
+    </span>
+  </div>
+<% else %>
+  <!-- Single Message Bubble -->
+  <div class="flex <%= message.from_ai? ? 'justify-start' : (message.user_id.present? && message.user_id == viewing_user_id ? 'justify-end' : 'justify-start') %> animate-slide-up" id="<%= dom_id(message) %>">
+    <div class="max-w-[80%] md:max-w-[65%] lg:max-w-[55%] flex gap-2 <%= message.user_id.present? && message.user_id == viewing_user_id ? 'flex-row-reverse' : '' %>">
+      <!-- Avatar (for AI or other user) -->
+      <% unless message.user_id.present? && message.user_id == viewing_user_id %>
+        <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-5 overflow-hidden">
+          <% if message.from_ai? %>
+            <div class="w-full h-full bg-amber-500 flex items-center justify-center">
+              <i class="fa-solid fa-robot text-white text-xs"></i>
+            </div>
+          <% else %>
+            <img src="https://api.dicebear.com/9.x/shapes/svg?seed=buddy<%= message.chat_room_id %>&backgroundColor=e0e7ff" alt="avatar" class="w-full h-full object-cover">
+          <% end %>
+        </div>
+      <% end %>
 
-      <!-- Message bubble -->
-      <% bubble_class = if message.from_ai?
-           'ai-bubble text-gray-800 rounded-bl-none'
-         elsif message.user_id == current_user&.id
-           'bg-sky-500 text-white rounded-br-none'
-         else
-           'bg-white border border-gray-100 text-gray-700 rounded-bl-none shadow-sm'
-         end %>
-      <div class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed msg-enter <%= bubble_class %>">
-        <%= simple_format(message.content) %>
+      <div>
+        <!-- Sender name & time -->
+        <p class="text-[10px] text-gray-400 mb-1 px-1 <%= message.user_id.present? && message.user_id == viewing_user_id ? 'text-right' : '' %>">
+          <%= message.from_ai? ? 'AI ติวเตอร์' : (message.user&.name || 'เพื่อนติว') %>
+          <span class="ml-1"><%= message.created_at.strftime("%H:%M") %></span>
+        </p>
+
+        <!-- Message bubble -->
+        <% bubble_class = if message.from_ai?
+             'ai-bubble text-gray-800 rounded-bl-none'
+           elsif message.user_id.present? && message.user_id == viewing_user_id
+             'bg-sky-500 text-white rounded-br-none'
+           else
+             'bg-white border border-gray-100 text-gray-700 rounded-bl-none shadow-sm'
+           end %>
+        <div class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed msg-enter <%= bubble_class %>">
+          <%= simple_format(message.content) %>
+        </div>
       </div>
     </div>
   </div>
-</div>
+<% end %>

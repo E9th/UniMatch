@@ -1,11 +1,14 @@
 somchai_in_human:
   user: somchai
   chat_room: human_room
+  identity_revealed: false
 
 somying_in_human:
   user: somying
   chat_room: human_room
+  identity_revealed: false
 
 somchai_in_ai:
   user: somchai
   chat_room: ai_room
+  identity_revealed: false

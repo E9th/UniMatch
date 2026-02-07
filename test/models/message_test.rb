@@ -36,6 +36,11 @@ class MessageTest < ActiveSupport::TestCase
     assert msg.valid?
   end
 
+  test "accepts system role" do
+    msg = Message.new(content: "System event", chat_room: @chat_room, role: "system")
+    assert msg.valid?
+  end
+
   test "default role is user" do
     msg = Message.new
     assert_equal "user", msg.role
@@ -58,6 +63,15 @@ class MessageTest < ActiveSupport::TestCase
 
   test "from_ai? returns false for user" do
     assert_not @user_msg.from_ai?
+  end
+
+  test "system_message? returns true for system role" do
+    msg = Message.new(role: "system")
+    assert msg.system_message?
+  end
+
+  test "system_message? returns false for user role" do
+    assert_not @user_msg.system_message?
   end
 
   test "sender_name for user with name" do
