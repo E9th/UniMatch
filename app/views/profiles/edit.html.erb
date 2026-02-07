@@ -6,7 +6,7 @@
       <div class="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden ring-4 ring-sky-100 mx-auto mb-4">
         <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=<%= @user.name %>&backgroundColor=b6e3f4" alt="avatar" class="w-full h-full object-cover">
       </div>
-      <h2 class="text-xl md:text-2xl font-bold text-gray-800">แนะนำตัวหน่อย</h2>
+      <h2 class="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100">แนะนำตัวหน่อย</h2>
       <p class="mt-1 text-gray-400 text-sm">กรอกข้อมูลให้ครบเพื่อจับคู่เพื่อนติว</p>
     </div>
 
@@ -28,7 +28,7 @@
     <%= form_with model: @user, url: update_profile_path, method: :patch, class: "space-y-5 lg:space-y-6" do |f| %>
       <!-- Name & Faculty + Subjects side by side on lg -->
       <div class="lg:grid lg:grid-cols-2 lg:gap-6 space-y-5 lg:space-y-0">
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-5 space-y-4">
           <h3 class="text-xs font-medium text-sky-600 uppercase tracking-wide flex items-center gap-2">
             <i class="fa-solid fa-user"></i>
             ข้อมูลพื้นฐาน
@@ -61,7 +61,7 @@
         </div>
 
         <!-- Subjects -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-5 space-y-4">
           <h3 class="text-xs font-medium text-sky-600 uppercase tracking-wide flex items-center gap-2">
             <i class="fa-solid fa-book-open"></i>
             วิชาเรียน
@@ -112,7 +112,7 @@
       <!-- Study Style + Time side by side on lg -->
       <div class="lg:grid lg:grid-cols-2 lg:gap-6 space-y-5 lg:space-y-0">
         <!-- Study Style -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-5">
           <h3 class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-2">
             <i class="fa-solid fa-book"></i>
             สไตล์การเรียน
@@ -141,7 +141,7 @@
         </div>
 
         <!-- Available Time -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-5">
           <h3 class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-2">
             <i class="fa-regular fa-clock"></i>
             เวลาว่าง
@@ -177,7 +177,7 @@
       </div>
 
       <!-- Bio -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-5">
         <h3 class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-2">
           <i class="fa-solid fa-pen"></i>
           แนะนำตัว

@@ -3,7 +3,7 @@
   <div class="animate-fade-in-up">
     <!-- Header -->
     <div class="flex justify-between items-center mb-5">
-      <h1 class="text-lg md:text-xl font-bold text-gray-800 flex items-center gap-2">
+      <h1 class="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
         <i class="fa-solid fa-comment text-sky-500"></i>
         แชท
       </h1>
@@ -16,13 +16,16 @@
     <% if @chat_rooms.any? %>
       <div class="grid md:grid-cols-2 gap-3">
         <% @chat_rooms.each do |room| %>
-          <%= link_to chat_room_path(room), class: "block bg-white rounded-xl border border-gray-100 shadow-sm p-4 hover:border-sky-200 hover:shadow-md transition-all duration-200 group" do %>
+          <% other = room.is_ai_mode? ? nil : room.other_member(current_user) %>
+          <% revealed = other && room.identity_revealed?(other) %>
+          <% membership = room.chat_room_memberships.find_by(user: current_user) %>
+          <% last_read = membership&.last_read_at || membership&.created_at %>
+          <% unread = last_read ? room.messages.where("created_at > ? AND (user_id != ? OR user_id IS NULL)", last_read, current_user.id).count : 0 %>
+          <%= link_to chat_room_path(room), class: "block bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm p-4 hover:border-sky-200 dark:hover:border-sky-600 hover:shadow-md transition-all duration-200 group" do %>
             <div class="flex items-center gap-3">
               <!-- Avatar -->
-              <% other = room.is_ai_mode? ? nil : room.other_member(current_user) %>
-              <% revealed = other && room.identity_revealed?(other) %>
               <div class="relative flex-shrink-0">
-                <div class="w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-50">
+                <div class="w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-50 dark:ring-slate-600">
                   <% if room.is_ai_mode? %>
                     <div class="w-full h-full bg-amber-500 flex items-center justify-center">
                       <i class="fa-solid fa-robot text-white text-lg"></i>
@@ -34,14 +37,18 @@
                   <% end %>
                 </div>
                 <% unless room.is_ai_mode? %>
-                  <div class="status-online absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
+                  <% if other&.online? %>
+                    <div class="status-online absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 border-2 border-white dark:border-slate-800 rounded-full"></div>
+                  <% else %>
+                    <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-300 border-2 border-white dark:border-slate-800 rounded-full"></div>
+                  <% end %>
                 <% end %>
               </div>
 
               <!-- Content -->
               <div class="flex-1 min-w-0">
                 <div class="flex justify-between items-baseline">
-                  <h3 class="font-semibold text-gray-800 text-sm group-hover:text-sky-500 transition-colors truncate">
+                  <h3 class="font-semibold text-gray-800 dark:text-gray-100 text-sm group-hover:text-sky-500 transition-colors truncate">
                     <%= room.is_ai_mode? ? 'AI ติวเตอร์' : (revealed ? other.name : 'เพื่อนติวปริศนา') %>
                   </h3>
                   <% if room.last_message %>
@@ -57,9 +64,11 @@
                 </p>
               </div>
 
-              <!-- Badge -->
+              <!-- Badge: AI or Unread count -->
               <% if room.is_ai_mode? %>
                 <span class="text-[10px] bg-amber-50 text-amber-600 px-2 py-0.5 rounded-md font-medium border border-amber-200 whitespace-nowrap">AI</span>
+              <% elsif unread > 0 %>
+                <span class="min-w-[20px] h-5 flex items-center justify-center bg-sky-500 text-white text-[10px] font-bold rounded-full px-1.5"><%= unread > 99 ? '99+' : unread %></span>
               <% end %>
             </div>
           <% end %>
@@ -67,11 +76,11 @@
       </div>
     <% else %>
       <!-- Empty State -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center mt-4">
-        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-5 animate-float">
-          <i class="fa-solid fa-ghost text-gray-300 text-3xl"></i>
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-12 text-center mt-4">
+        <div class="w-20 h-20 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-5 animate-float">
+          <i class="fa-solid fa-ghost text-gray-300 dark:text-gray-500 text-3xl"></i>
         </div>
-        <h3 class="font-semibold text-gray-700 mb-2">ยังไม่มีห้องแชท</h3>
+        <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-2">ยังไม่มีห้องแชท</h3>
         <p class="text-gray-400 text-sm mb-6">ไปหาเพื่อนคุยกันเถอะ!</p>
         <div class="flex flex-col sm:flex-row gap-2 sm:justify-center">
           <%= link_to matches_path, class: "w-full sm:w-auto py-3 sm:px-6 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-medium transition-colors text-center flex items-center justify-center gap-2 shadow-sm" do %>

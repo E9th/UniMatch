@@ -1,7 +1,10 @@
 <!-- Chat Room -->
-<div class="max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] flex flex-col" data-controller="chat-scroll">
+<div class="max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] flex flex-col"
+     data-controller="chat-scroll typing search-messages"
+     data-typing-room-id-value="<%= @chat_room.id %>"
+     data-typing-user-id-value="<%= current_user.id %>">
   <!-- Chat Header -->
-  <div class="bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between z-10 shadow-sm">
+  <div class="bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700 px-4 py-3 flex items-center justify-between z-10 shadow-sm">
     <div class="flex items-center gap-3">
       <%= link_to chat_rooms_path, class: "text-gray-400 hover:text-sky-500 transition-colors p-1" do %>
         <i class="fa-solid fa-arrow-left"></i>
@@ -9,14 +12,14 @@
       <% if @chat_room.is_ai_mode? %>
         <%# AI room — not clickable %>
         <div class="relative">
-          <div class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-50">
+          <div class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-50 dark:ring-slate-600">
             <div class="w-full h-full bg-amber-500 flex items-center justify-center">
               <i class="fa-solid fa-robot text-white"></i>
             </div>
           </div>
         </div>
         <div>
-          <h2 class="font-semibold text-gray-800 text-sm md:text-base">AI ติวเตอร์</h2>
+          <h2 class="font-semibold text-gray-800 dark:text-gray-100 text-sm md:text-base">AI ติวเตอร์</h2>
           <p class="text-[10px] text-gray-400">
             <i class="fa-solid fa-wand-magic-sparkles text-sky-400 mr-1"></i>Powered by AI
           </p>
@@ -25,17 +28,21 @@
         <%# Peer room — clickable to view partner profile %>
         <%= link_to partner_profile_chat_room_path(@chat_room), class: "flex items-center gap-3 hover:opacity-80 transition-opacity" do %>
           <div class="relative">
-            <div class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-50">
+            <div class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-50 dark:ring-slate-600">
               <% if @other_user && @other_revealed %>
                 <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=<%= @other_user.name %>&backgroundColor=b6e3f4" alt="avatar" class="w-full h-full object-cover">
               <% else %>
                 <img src="https://api.dicebear.com/9.x/shapes/svg?seed=buddy<%= @chat_room.id %>&backgroundColor=e0e7ff" alt="avatar" class="w-full h-full object-cover">
               <% end %>
             </div>
-            <div class="status-online absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full ring-2 ring-white"></div>
+            <% if @other_user&.online? %>
+              <div class="status-online absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full ring-2 ring-white dark:ring-slate-800"></div>
+            <% else %>
+              <div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-gray-300 rounded-full ring-2 ring-white dark:ring-slate-800"></div>
+            <% end %>
           </div>
           <div>
-            <h2 class="font-semibold text-gray-800 text-sm md:text-base">
+            <h2 class="font-semibold text-gray-800 dark:text-gray-100 text-sm md:text-base">
               <% if @other_user && @other_revealed %>
                 <%= @other_user.name %>
               <% else %>
@@ -60,23 +67,47 @@
       <% end %>
     </div>
 
-    <% unless @chat_room.is_ai_mode? %>
-      <% if @my_membership&.identity_revealed? %>
-        <span class="px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-xs font-medium border border-green-200 flex items-center gap-1.5">
-          <i class="fa-solid fa-check-circle"></i>
-          เปิดเผยแล้ว
-        </span>
-      <% else %>
-        <%= button_to reveal_identity_chat_room_path(@chat_room), method: :post, class: "px-3 py-1.5 bg-gray-50 hover:bg-sky-50 text-gray-500 hover:text-sky-600 rounded-lg text-xs font-medium transition-colors border border-gray-200 flex items-center gap-1.5", data: { turbo_confirm: "เปิดเผยตัวตน?\nคู่สนทนาจะเห็นชื่อและรูปโปรไฟล์จริงของคุณ" } do %>
-          <i class="fa-solid fa-eye"></i>
-          เปิดเผย
+    <div class="flex items-center gap-2">
+      <!-- Search Toggle Button -->
+      <button type="button" class="text-gray-400 hover:text-sky-500 transition-colors p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700"
+              data-action="click->search-messages#toggle"
+              data-search-messages-target="toggle">
+        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+      </button>
+
+      <% unless @chat_room.is_ai_mode? %>
+        <% if @my_membership&.identity_revealed? %>
+          <span class="px-3 py-1.5 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg text-xs font-medium border border-green-200 dark:border-green-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-check-circle"></i>
+            เปิดเผยแล้ว
+          </span>
+        <% else %>
+          <%= button_to reveal_identity_chat_room_path(@chat_room), method: :post, class: "px-3 py-1.5 bg-gray-50 hover:bg-sky-50 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-500 hover:text-sky-600 dark:text-gray-300 rounded-lg text-xs font-medium transition-colors border border-gray-200 dark:border-slate-600 flex items-center gap-1.5", data: { turbo_confirm: "เปิดเผยตัวตน?\nคู่สนทนาจะเห็นชื่อและรูปโปรไฟล์จริงของคุณ" } do %>
+            <i class="fa-solid fa-eye"></i>
+            เปิดเผย
+          <% end %>
         <% end %>
       <% end %>
-    <% end %>
+    </div>
+  </div>
+
+  <!-- Search Bar (hidden by default) -->
+  <div style="display:none" data-search-messages-target="bar"
+       class="bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700 px-4 py-2 flex items-center gap-2 animate-slide-up">
+    <i class="fa-solid fa-magnifying-glass text-gray-400 text-sm"></i>
+    <input type="text"
+           data-search-messages-target="input"
+           data-action="input->search-messages#search"
+           placeholder="ค้นหาข้อความ..."
+           class="flex-1 bg-gray-100 dark:bg-slate-700 dark:text-white rounded-lg px-3 py-1.5 text-sm border-0 outline-none focus:ring-2 focus:ring-sky-500">
+    <span data-search-messages-target="results" class="text-xs text-gray-400 whitespace-nowrap"></span>
+    <button type="button" data-action="click->search-messages#toggle" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
   </div>
 
   <!-- Messages Container -->
-  <div class="flex-1 bg-gray-50 overflow-y-auto no-scrollbar px-4 py-4" id="messages-container" data-chat-scroll-target="container">
+  <div class="flex-1 bg-gray-50 dark:bg-slate-900 overflow-y-auto no-scrollbar px-4 py-4" id="messages-container" data-chat-scroll-target="container">
     <!-- Welcome message -->
     <% if @messages.empty? %>
       <div class="text-center py-16 animate-fade-in-up">
@@ -84,13 +115,13 @@
           <div class="w-16 h-16 mx-auto bg-amber-500 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-amber-500/20 animate-float">
             <i class="fa-solid fa-robot text-white text-2xl"></i>
           </div>
-          <h3 class="font-semibold text-gray-700 text-sm mb-1">สวัสดีครับ! ผมเป็น AI ติวเตอร์</h3>
+          <h3 class="font-semibold text-gray-700 dark:text-gray-200 text-sm mb-1">สวัสดีครับ! ผมเป็น AI ติวเตอร์</h3>
           <p class="text-gray-400 text-xs max-w-xs mx-auto">ถามอะไรก็ได้เกี่ยวกับการเรียน ผมพร้อมช่วยตลอดเวลา</p>
         <% else %>
           <div class="w-16 h-16 mx-auto bg-indigo-500 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-indigo-500/20 animate-float">
             <i class="fa-solid fa-hand-peace text-white text-2xl"></i>
           </div>
-          <h3 class="font-semibold text-gray-700 text-sm mb-1">เริ่มสนทนากันเลย!</h3>
+          <h3 class="font-semibold text-gray-700 dark:text-gray-200 text-sm mb-1">เริ่มสนทนากันเลย!</h3>
           <p class="text-gray-400 text-xs">ทักทายเพื่อนติวปริศนาของคุณ</p>
         <% end %>
       </div>
@@ -118,7 +149,17 @@
   <%= turbo_stream_from "chat_room_#{@chat_room.id}_user_#{current_user.id}" %>
 
   <!-- Message Form -->
-  <div class="bg-white border-t border-gray-100 px-4 py-3 safe-area-bottom shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.03)]">
+  <div class="bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700 px-4 py-3 safe-area-bottom shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.03)]">
+    <!-- Typing Indicator -->
+    <div style="display:none" data-typing-target="indicator" class="flex items-center gap-2 px-2 pb-2">
+      <div class="flex gap-1">
+        <span class="typing-dot w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+        <span class="typing-dot w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+        <span class="typing-dot w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+      </div>
+      <span class="text-xs text-gray-400">กำลังพิมพ์...</span>
+    </div>
+
     <% unless @chat_room.is_ai_mode? %>
       <!-- Review Section -->
       <div class="mb-2">
@@ -146,7 +187,7 @@
                   <% end %>
                 </div>
                 <div class="flex gap-2 w-full">
-                  <input type="text" name="comment" placeholder="ความคิดเห็น (ไม่บังคับ)" class="flex-1 px-3 py-2 rounded-xl bg-gray-100 text-xs border-0 focus:ring-2 focus:ring-sky-500 outline-none">
+                  <input type="text" name="comment" placeholder="ความคิดเห็น (ไม่บังคับ)" class="flex-1 px-3 py-2 rounded-xl bg-gray-100 dark:bg-slate-700 dark:text-white text-xs border-0 focus:ring-2 focus:ring-sky-500 outline-none">
                   <button type="submit" class="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-white rounded-xl text-xs font-medium transition-colors flex items-center gap-1">
                     <i class="fa-solid fa-paper-plane text-[10px]"></i>
                     ส่ง

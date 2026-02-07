@@ -42,12 +42,20 @@
     <style>
       * { font-family: 'Kanit', sans-serif; }
     </style>
+
+    <!-- Apply dark mode before paint to prevent flash -->
+    <script>
+      if (localStorage.getItem('darkMode') === 'true' || (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
   </head>
 
-  <body class="h-full bg-gray-100 text-slate-800">
+  <body class="h-full bg-gray-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-200"
+        data-controller="<%= 'online-status dark-mode' if logged_in? %>">
     <% if logged_in? %>
       <!-- ===== DESKTOP NAVIGATION ===== -->
-      <nav class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm hidden md:block">
+      <nav class="bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700 sticky top-0 z-50 shadow-sm hidden md:block">
         <div class="max-w-6xl mx-auto px-6">
           <div class="flex justify-between items-center h-16">
             <!-- Logo -->
@@ -55,34 +63,43 @@
               <div class="w-9 h-9 bg-sky-500 rounded-xl flex items-center justify-center shadow-sm">
                 <i class="fa-solid fa-graduation-cap text-white text-sm"></i>
               </div>
-              <span class="font-bold text-xl text-slate-800 group-hover:text-sky-500 transition-colors">UniMatch</span>
+              <span class="font-bold text-xl text-slate-800 dark:text-white group-hover:text-sky-500 transition-colors">UniMatch</span>
             <% end %>
 
             <!-- Nav Links -->
             <div class="flex items-center gap-1">
-              <%= link_to dashboard_path, class: "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 #{request.path == dashboard_path ? 'bg-sky-50 text-sky-600' : 'text-slate-500 hover:text-sky-500 hover:bg-gray-50'}" do %>
+              <%= link_to dashboard_path, class: "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 #{request.path == dashboard_path ? 'bg-sky-50 dark:bg-sky-900/30 text-sky-600' : 'text-slate-500 dark:text-slate-400 hover:text-sky-500 hover:bg-gray-50 dark:hover:bg-slate-700'}" do %>
                 <i class="fa-solid fa-compass"></i>
                 ค้นหา
               <% end %>
-              <%= link_to chat_rooms_path, class: "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 #{request.path == chat_rooms_path ? 'bg-sky-50 text-sky-600' : 'text-slate-500 hover:text-sky-500 hover:bg-gray-50'}" do %>
+              <%= link_to chat_rooms_path, class: "relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 #{request.path == chat_rooms_path ? 'bg-sky-50 dark:bg-sky-900/30 text-sky-600' : 'text-slate-500 dark:text-slate-400 hover:text-sky-500 hover:bg-gray-50 dark:hover:bg-slate-700'}" do %>
                 <i class="fa-solid fa-comment"></i>
                 แชท
+                <% if unread_chat_count > 0 %>
+                  <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center bg-rose-500 text-white text-[10px] font-bold rounded-full px-1"><%= unread_chat_count > 99 ? '99+' : unread_chat_count %></span>
+                <% end %>
               <% end %>
-              <%= link_to edit_profile_path, class: "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 #{request.path == edit_profile_path ? 'bg-sky-50 text-sky-600' : 'text-slate-500 hover:text-sky-500 hover:bg-gray-50'}" do %>
+              <%= link_to edit_profile_path, class: "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 #{request.path == edit_profile_path ? 'bg-sky-50 dark:bg-sky-900/30 text-sky-600' : 'text-slate-500 dark:text-slate-400 hover:text-sky-500 hover:bg-gray-50 dark:hover:bg-slate-700'}" do %>
                 <i class="fa-solid fa-user"></i>
                 โปรไฟล์
               <% end %>
             </div>
 
-            <!-- Profile -->
+            <!-- Profile + Dark mode -->
             <div class="flex items-center gap-3">
+              <!-- Dark mode toggle -->
+              <button type="button" data-action="click->dark-mode#toggle"
+                      class="text-slate-400 hover:text-sky-500 dark:text-slate-400 dark:hover:text-sky-400 transition-colors p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700">
+                <i class="fa-solid fa-moon" data-dark-mode-target="icon"></i>
+              </button>
+
               <%= link_to edit_profile_path, class: "flex items-center gap-2.5 group" do %>
-                <div class="w-9 h-9 rounded-full overflow-hidden ring-2 ring-sky-100">
+                <div class="w-9 h-9 rounded-full overflow-hidden ring-2 ring-sky-100 dark:ring-sky-900">
                   <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=<%= current_user.name %>&backgroundColor=b6e3f4" alt="avatar" class="w-full h-full object-cover">
                 </div>
-                <span class="text-sm font-medium text-slate-600 group-hover:text-sky-500 transition-colors"><%= current_user.name %></span>
+                <span class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-sky-500 transition-colors"><%= current_user.name %></span>
               <% end %>
-              <%= button_to logout_path, method: :delete, class: "text-slate-400 hover:text-rose-500 transition-colors ml-1 p-2 rounded-lg hover:bg-rose-50", data: { turbo_method: :delete } do %>
+              <%= button_to logout_path, method: :delete, class: "text-slate-400 hover:text-rose-500 transition-colors ml-1 p-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/20", data: { turbo_method: :delete } do %>
                 <i class="fa-solid fa-right-from-bracket"></i>
               <% end %>
             </div>
@@ -91,7 +108,7 @@
       </nav>
 
       <!-- ===== MOBILE TOP BAR ===== -->
-      <nav class="bg-sky-500 sticky top-0 z-50 shadow-md md:hidden relative overflow-hidden">
+      <nav class="bg-sky-500 dark:bg-slate-800 sticky top-0 z-50 shadow-md md:hidden relative overflow-hidden">
         <div class="absolute -top-10 -right-10 w-24 h-24 bg-white opacity-10 rounded-full blur-2xl"></div>
         <div class="px-4 flex justify-between items-center h-14 relative z-10">
           <%= link_to dashboard_path, class: "flex items-center gap-2" do %>
@@ -99,7 +116,11 @@
             <span class="font-bold text-lg text-white">UniMatch</span>
           <% end %>
           <div class="flex items-center gap-2">
-            <p class="text-sky-100 text-[10px] font-light hidden sm:block">หาเพื่อนติวที่ใช่</p>
+            <!-- Dark mode toggle (mobile) -->
+            <button type="button" data-action="click->dark-mode#toggle"
+                    class="text-white/80 hover:text-white transition-colors p-1.5">
+              <i class="fa-solid fa-moon text-xs" data-dark-mode-target="icon"></i>
+            </button>
             <%= link_to edit_profile_path do %>
               <div class="bg-white/20 w-8 h-8 flex items-center justify-center rounded-full backdrop-blur-sm hover:bg-white/30 transition">
                 <i class="fa-solid fa-user text-white text-xs"></i>
@@ -110,15 +131,18 @@
       </nav>
 
       <!-- ===== BOTTOM NAVIGATION (Mobile) ===== -->
-      <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden safe-area-bottom">
+      <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden safe-area-bottom">
         <div class="flex justify-around items-center h-16 px-2">
           <%= link_to dashboard_path, class: "flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all #{request.path == dashboard_path ? 'text-sky-500' : 'text-slate-400'}" do %>
             <i class="fa-solid fa-compass text-lg"></i>
             <span class="text-[10px] font-medium">ค้นหา</span>
           <% end %>
-          <%= link_to chat_rooms_path, class: "flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all #{request.path == chat_rooms_path ? 'text-sky-500' : 'text-slate-400'}" do %>
+          <%= link_to chat_rooms_path, class: "relative flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all #{request.path == chat_rooms_path ? 'text-sky-500' : 'text-slate-400'}" do %>
             <i class="fa-solid fa-comment text-lg"></i>
             <span class="text-[10px] font-medium">แชท</span>
+            <% if unread_chat_count > 0 %>
+              <span class="absolute -top-0.5 right-0 min-w-[16px] h-[16px] flex items-center justify-center bg-rose-500 text-white text-[8px] font-bold rounded-full px-1"><%= unread_chat_count > 99 ? '99+' : unread_chat_count %></span>
+            <% end %>
           <% end %>
           <%= link_to edit_profile_path, class: "flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all #{request.path == edit_profile_path ? 'text-sky-500' : 'text-slate-400'}" do %>
             <i class="fa-solid fa-user text-lg"></i>
@@ -135,7 +159,7 @@
     <!-- ===== FLASH MESSAGES ===== -->
     <% if flash[:notice] %>
       <div class="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 md:px-6 mt-4 animate-slide-up">
-        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl flex items-center gap-3 shadow-sm">
+        <div class="bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 px-4 py-3 rounded-xl flex items-center gap-3 shadow-sm">
           <i class="fa-solid fa-circle-check flex-shrink-0"></i>
           <span class="text-sm font-medium"><%= flash[:notice] %></span>
         </div>
@@ -143,7 +167,7 @@
     <% end %>
     <% if flash[:alert] %>
       <div class="max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-4 md:px-6 mt-4 animate-slide-up">
-        <div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl flex items-center gap-3 shadow-sm">
+        <div class="bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 px-4 py-3 rounded-xl flex items-center gap-3 shadow-sm">
           <i class="fa-solid fa-circle-exclamation flex-shrink-0"></i>
           <span class="text-sm font-medium"><%= flash[:alert] %></span>
         </div>

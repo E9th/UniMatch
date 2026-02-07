@@ -6,6 +6,11 @@
 @import "tailwindcss";
 
 /* ========================================
+   DARK MODE VARIANT (class-based)
+   ======================================== */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ========================================
    ANIMATIONS
    ======================================== */
 
@@ -183,4 +188,30 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* ========================================
+   DARK MODE OVERRIDES
+   ======================================== */
+.dark body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+.dark .swal2-popup {
+  background: #1e293b !important;
+  color: #e2e8f0 !important;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Search highlight in dark mode */
+.dark mark {
+  background-color: #fbbf24;
+  color: #0f172a;
 }

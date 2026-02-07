@@ -39,6 +39,9 @@ Rails.application.routes.draw do
   end
   post "chat_rooms/ai", to: "chat_rooms#create_ai_room", as: :create_ai_chat
 
+  # Online status ping
+  post "ping", to: "application#ping"
+
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 end

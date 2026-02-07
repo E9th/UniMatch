@@ -3,7 +3,7 @@
   <div class="animate-fade-in-up">
     <!-- Header -->
     <div class="text-center mb-6">
-      <h1 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 flex items-center justify-center gap-2">
+      <h1 class="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center justify-center gap-2">
         <i class="fa-solid fa-users text-sky-500"></i>
         เพื่อนที่ Match กับคุณ
       </h1>
@@ -23,7 +23,7 @@
             score += 5 if match.available_time == current_user.available_time
             score = [score, 99].min
           %>
-          <div class="bg-white border border-gray-100 shadow-sm rounded-3xl p-5 relative overflow-hidden animate-card-pop hover:shadow-md transition-all" style="animation-delay: <%= i * 0.08 %>s">
+          <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm rounded-3xl p-5 relative overflow-hidden animate-card-pop hover:shadow-md transition-all" style="animation-delay: <%= i * 0.08 %>s">
             <div class="relative z-10">
               <!-- Profile Header -->
               <div class="flex flex-col items-center text-center mb-4">
@@ -31,7 +31,7 @@
                 <div class="w-20 h-20 bg-white rounded-full mb-3 border-4 border-white shadow-md overflow-hidden">
                   <img src="https://api.dicebear.com/9.x/shapes/svg?seed=<%= match.faculty %><%= match.id %>&backgroundColor=f1f5f9" alt="Avatar" class="w-full h-full object-cover">
                 </div>
-                <h3 class="text-base font-bold text-gray-800 leading-tight">สมาชิกคณะ<%= match.faculty %></h3>
+                <h3 class="text-base font-bold text-gray-800 dark:text-gray-100 leading-tight">สมาชิกคณะ<%= match.faculty %></h3>
 
                 <div class="flex items-center gap-3 mt-1 mb-2 text-xs">
                   <!-- Score Badge -->
@@ -109,11 +109,11 @@
       </div>
     <% else %>
       <!-- Empty State -->
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center max-w-md mx-auto">
-        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-5 animate-float">
-          <i class="fa-solid fa-ghost text-gray-300 text-3xl"></i>
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-12 text-center max-w-md mx-auto">
+        <div class="w-20 h-20 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-5 animate-float">
+          <i class="fa-solid fa-ghost text-gray-300 dark:text-gray-500 text-3xl"></i>
         </div>
-        <h3 class="text-lg font-bold text-gray-800">ยังไม่เจอคู่ที่เป๊ะเลย...</h3>
+        <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">ยังไม่เจอคู่ที่เป๊ะเลย...</h3>
         <p class="text-gray-500 mt-2 text-sm font-light px-4">ลองเปลี่ยนเวลา หรือวิชาดูไหม? <br>อาจจะมีคนรอติววิชาอื่นอยู่ก็ได้นะ</p>
         <div class="mt-6">
           <%= link_to edit_profile_path, class: "inline-flex items-center gap-2 px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-sm font-medium transition-colors shadow-lg shadow-sky-500/20 active:scale-95" do %>

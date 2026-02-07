@@ -33,6 +33,11 @@ class User < ApplicationRecord
     matches
   end
 
+  # ตรวจสอบสถานะออนไลน์ (active within 2 minutes)
+  def online?
+    last_seen_at.present? && last_seen_at > 2.minutes.ago
+  end
+
   # คะแนนรีวิวเฉลี่ย
   def average_rating
     reviews_received.average(:rating)&.round(1) || 0.0

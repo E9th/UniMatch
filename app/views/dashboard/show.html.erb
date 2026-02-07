@@ -27,11 +27,11 @@
       <!-- Left Column: Profile & Stats -->
       <div class="lg:col-span-1 space-y-4 mb-6 lg:mb-0">
         <!-- Profile Card -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-center">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6 text-center">
           <div class="w-20 h-20 rounded-full overflow-hidden ring-4 ring-sky-100 mx-auto mb-4">
             <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=<%= @user.name %>&backgroundColor=b6e3f4" alt="avatar" class="w-full h-full object-cover">
           </div>
-          <h1 class="text-lg font-bold text-gray-800"><%= @user.name %></h1>
+          <h1 class="text-lg font-bold text-gray-800 dark:text-gray-100"><%= @user.name %></h1>
           <p class="text-xs text-gray-400 mt-1">
             <% if @user.faculty.present? %>
               <i class="fa-solid fa-building text-gray-300 mr-1"></i>คณะ<%= @user.faculty %>
@@ -58,23 +58,23 @@
 
         <!-- Quick Actions -->
         <div class="space-y-2">
-          <%= link_to create_ai_chat_path, method: :post, class: "flex items-center gap-3 bg-white rounded-xl border border-gray-100 shadow-sm p-4 hover:border-amber-200 hover:shadow-md transition-all group", data: { turbo_method: :post } do %>
+          <%= link_to create_ai_chat_path, method: :post, class: "flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm p-4 hover:border-amber-200 hover:shadow-md transition-all group", data: { turbo_method: :post } do %>
             <div class="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center flex-shrink-0">
               <i class="fa-solid fa-robot text-white"></i>
             </div>
             <div class="flex-1 min-w-0">
-              <p class="font-medium text-gray-800 text-sm group-hover:text-amber-500 transition-colors">AI ติวเตอร์</p>
+              <p class="font-medium text-gray-800 dark:text-gray-100 text-sm group-hover:text-amber-500 transition-colors">AI ติวเตอร์</p>
               <p class="text-xs text-gray-400">ถามคำถามเรื่องเรียนกับ AI</p>
             </div>
             <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
           <% end %>
 
-          <%= link_to chat_rooms_path, class: "flex items-center gap-3 bg-white rounded-xl border border-gray-100 shadow-sm p-4 hover:border-emerald-200 hover:shadow-md transition-all group" do %>
+          <%= link_to chat_rooms_path, class: "flex items-center gap-3 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm p-4 hover:border-emerald-200 hover:shadow-md transition-all group" do %>
             <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0">
               <i class="fa-solid fa-comments text-white"></i>
             </div>
             <div class="flex-1 min-w-0">
-              <p class="font-medium text-gray-800 text-sm group-hover:text-emerald-500 transition-colors">ห้องแชทของฉัน</p>
+              <p class="font-medium text-gray-800 dark:text-gray-100 text-sm group-hover:text-emerald-500 transition-colors">ห้องแชทของฉัน</p>
               <p class="text-xs text-gray-400">ดูการสนทนาทั้งหมด</p>
             </div>
             <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
@@ -92,7 +92,7 @@
       <!-- Right Column: Search & Matches -->
       <div class="lg:col-span-2 space-y-6">
         <!-- Search Hero -->
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-8 text-center">
           <div class="relative w-32 h-32 md:w-40 md:h-40 mx-auto mb-6">
             <!-- Radar rings -->
             <div class="absolute inset-0 rounded-full border-2 border-sky-200/60 animate-radar-ping"></div>
@@ -106,7 +106,7 @@
             </div>
           </div>
 
-          <h3 class="text-lg font-semibold text-gray-800 mb-1">ตามหาบัดดี้ของคุณ</h3>
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1">ตามหาบัดดี้ของคุณ</h3>
           <p class="text-gray-500 text-sm mb-6">เลือกวิชาและสไตล์ที่ชอบได้เลย</p>
 
           <%= link_to matches_path, class: "inline-flex items-center gap-2 px-8 py-3.5 bg-sky-500 hover:bg-sky-600 text-white font-semibold rounded-xl shadow-lg shadow-sky-500/20 active:scale-95 transition-all duration-200 text-sm" do %>
@@ -131,7 +131,7 @@
 
             <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-3">
               <% @matches.first(4).each_with_index do |match, i| %>
-                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center gap-3 animate-card-pop hover:border-sky-200 hover:shadow-md transition-all" style="animation-delay: <%= i * 0.1 %>s">
+                <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm p-4 flex items-center gap-3 animate-card-pop hover:border-sky-200 hover:shadow-md transition-all" style="animation-delay: <%= i * 0.1 %>s">
                   <div class="w-11 h-11 rounded-full overflow-hidden ring-2 ring-indigo-100 flex-shrink-0">
                     <img src="https://api.dicebear.com/9.x/shapes/svg?seed=<%= match.faculty %><%= match.id %>&backgroundColor=e0e7ff" alt="avatar" class="w-full h-full object-cover">
                   </div>
@@ -152,8 +152,8 @@
           </div>
         <% else %>
           <!-- Empty State -->
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
-            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-10 text-center">
+            <div class="w-20 h-20 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
               <i class="fa-solid fa-ghost text-gray-300 text-3xl"></i>
             </div>
             <p class="font-semibold text-gray-700 text-sm mb-1">ยังไม่พบเพื่อนที่ Match</p>

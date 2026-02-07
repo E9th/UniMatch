@@ -1,5 +1,5 @@
 <!-- Message Input Form -->
-<%= form_with model: message, url: chat_room_messages_path(chat_room), class: "flex items-center gap-2", data: { controller: "message image-preview" } do |f| %>
+<%= form_with model: message, url: chat_room_messages_path(chat_room), class: "flex items-center gap-2", data: { controller: "message image-preview", action: "submit->typing#stop" } do |f| %>
   <div class="relative flex-1" data-controller="emoji-picker">
     <!-- Image Preview -->
     <div style="display:none" class="mb-2 relative inline-block" data-image-preview-target="preview">
@@ -11,10 +11,10 @@
     </div>
     <%= f.text_area :content,
         rows: 1,
-        class: "w-full pl-4 pr-16 py-3 rounded-2xl border-0 bg-gray-100 focus:ring-2 focus:ring-sky-500 focus:bg-white outline-none transition-all resize-none text-sm",
+        class: "w-full pl-4 pr-16 py-3 rounded-2xl border-0 bg-gray-100 dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-sky-500 focus:bg-white dark:focus:bg-slate-600 outline-none transition-all resize-none text-sm",
         placeholder: chat_room.is_ai_mode? ? "ถามอะไรก็ได้เกี่ยวกับการเรียน..." : "พิมพ์ข้อความ...",
         autofocus: true,
-        data: { action: "keydown->message#submitOnEnter", emoji_picker_target: "input" } %>
+        data: { action: "keydown->message#submitOnEnter input->typing#input", emoji_picker_target: "input" } %>
     <div class="absolute right-3 bottom-3 flex items-center gap-1.5">
       <% unless chat_room.is_ai_mode? %>
         <label class="cursor-pointer text-gray-400 hover:text-sky-500 transition-colors">
