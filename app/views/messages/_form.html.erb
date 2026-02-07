@@ -2,8 +2,8 @@
 <%= form_with model: message, url: chat_room_messages_path(chat_room), class: "flex items-center gap-2", data: { controller: "message image-preview" } do |f| %>
   <div class="relative flex-1" data-controller="emoji-picker">
     <!-- Image Preview -->
-    <div class="hidden mb-2 relative inline-block" data-image-preview-target="preview">
-      <img src="" alt="preview" class="max-h-32 rounded-xl border border-gray-200" data-image-preview-target="img">
+    <div style="display:none" class="mb-2 relative inline-block" data-image-preview-target="preview">
+      <img alt="preview" class="max-h-32 rounded-xl border border-gray-200" data-image-preview-target="img">
       <button type="button" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full text-xs flex items-center justify-center shadow-md hover:bg-rose-600"
               data-action="click->image-preview#remove">
         <i class="fa-solid fa-xmark"></i>

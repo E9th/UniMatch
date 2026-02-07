@@ -19,7 +19,7 @@ export default class extends Controller {
     reader.onload = (e) => {
       if (this.hasImgTarget && this.hasPreviewTarget) {
         this.imgTarget.src = e.target.result
-        this.previewTarget.classList.remove("hidden")
+        this.previewTarget.style.display = "inline-block"
       }
     }
     reader.readAsDataURL(file)
@@ -27,10 +27,10 @@ export default class extends Controller {
 
   remove() {
     if (this.hasPreviewTarget) {
-      this.previewTarget.classList.add("hidden")
+      this.previewTarget.style.display = "none"
     }
     if (this.hasImgTarget) {
-      this.imgTarget.src = ""
+      this.imgTarget.removeAttribute("src")
     }
     if (this.hasFileInputTarget) {
       this.fileInputTarget.value = ""
