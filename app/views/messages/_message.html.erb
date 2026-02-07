@@ -1,5 +1,5 @@
-<%# Handle broadcast context where current_user helper returns nil (no session) %>
-<% viewing_user_id = (current_user&.id rescue nil) %>
+<%# Use passed viewing_user_id (from broadcast) or fall back to current_user %>
+<% viewing_user_id = local_assigns.key?(:viewing_user_id) ? viewing_user_id : (current_user&.id rescue nil) %>
 
 <% if message.system_message? %>
   <!-- System Message (e.g., identity reveal) -->

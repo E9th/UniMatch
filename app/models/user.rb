@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_many :chat_room_memberships, dependent: :destroy
   has_many :chat_rooms, through: :chat_room_memberships
   has_many :owned_chat_rooms, class_name: "ChatRoom", dependent: :destroy
+  has_many :reviews_given, class_name: "Review", foreign_key: :reviewer_id, dependent: :destroy
+  has_many :reviews_received, class_name: "Review", foreign_key: :reviewee_id, dependent: :destroy
 
   # บังคับใช้อีเมลมหาวิทยาลัย
   validates :email, presence: true, uniqueness: { case_sensitive: false },
@@ -29,6 +31,16 @@ class User < ApplicationRecord
     # matches = matches.same_study_style(study_style) if study_style.present?
 
     matches
+  end
+
+  # คะแนนรีวิวเฉลี่ย
+  def average_rating
+    reviews_received.average(:rating)&.round(1) || 0.0
+  end
+
+  # จำนวนรีวิว
+  def review_count
+    reviews_received.count
   end
 
   # ค้นหาหรือสร้าง AI Chat Room ส่วนตัว

@@ -4,31 +4,61 @@ require "json"
 
 class GeminiService
   BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+  MAX_RETRIES = 3
 
   def initialize(api_key = ENV["GEMINI_API_KEY"])
     @api_key = api_key
   end
 
   def chat(prompt)
+    if @api_key.blank?
+      Rails.logger.error "Gemini API Error: GEMINI_API_KEY is not set!"
+      return "ขอโทษด้วยครับ ยังไม่ได้ตั้งค่า API Key สำหรับระบบ AI 🔑"
+    end
+
     uri = URI("#{BASE_URL}?key=#{@api_key}")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.read_timeout = 30
+    retries = 0
 
-    request = Net::HTTP::Post.new(uri)
-    request["Content-Type"] = "application/json"
-    request.body = {
-      contents: [{ parts: [{ text: prompt }] }]
-    }.to_json
+    loop do
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.read_timeout = 30
+      http.open_timeout = 10
 
-    response = http.request(request)
-    parsed_response = JSON.parse(response.body)
+      request = Net::HTTP::Post.new(uri)
+      request["Content-Type"] = "application/json"
+      request.body = {
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 1024 }
+      }.to_json
 
-    # ดึงข้อความตอบกลับ
-    result = parsed_response.dig("candidates", 0, "content", "parts", 0, "text")
-    result.presence || "ขอโทษด้วยครับ ระบบ AI มีปัญหาชั่วคราว 🙏"
+      response = http.request(request)
+
+      # Handle rate limiting with retry
+      if response.code == "429" && retries < MAX_RETRIES
+        retries += 1
+        wait_time = 2 ** retries # exponential backoff: 2, 4, 8 seconds
+        Rails.logger.warn "Gemini API rate limited (429). Retry #{retries}/#{MAX_RETRIES} after #{wait_time}s"
+        sleep(wait_time)
+        next
+      end
+
+      unless response.code == "200"
+        Rails.logger.error "Gemini API HTTP #{response.code}: #{response.body.truncate(500)}"
+        return "ขอโทษด้วยครับ ระบบ AI มีปัญหาชั่วคราว (#{response.code}) กรุณาลองใหม่อีกครั้ง 🙏"
+      end
+
+      parsed_response = JSON.parse(response.body)
+
+      # ดึงข้อความตอบกลับ
+      result = parsed_response.dig("candidates", 0, "content", "parts", 0, "text")
+      return result.presence || "ขอโทษด้วยครับ ระบบ AI ไม่สามารถสร้างคำตอบได้ กรุณาลองใหม่อีกครั้ง 🙏"
+    end
+  rescue Net::ReadTimeout, Net::OpenTimeout => e
+    Rails.logger.error "Gemini API Timeout: #{e.message}"
+    "ขอโทษด้วยครับ ระบบ AI ตอบช้าเกินไป กรุณาลองใหม่อีกครั้ง ⏳"
   rescue StandardError => e
-    Rails.logger.error "Gemini API Error: #{e.message}"
+    Rails.logger.error "Gemini API Error: #{e.class} - #{e.message}"
     "ขอโทษด้วยครับ ระบบ AI มีปัญหาชั่วคราว 🙏"
   end
 

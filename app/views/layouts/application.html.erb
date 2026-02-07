@@ -103,17 +103,21 @@
       <!-- ===== BOTTOM NAVIGATION (Mobile) ===== -->
       <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden safe-area-bottom">
         <div class="flex justify-around items-center h-16 px-2">
-          <%= link_to dashboard_path, class: "flex flex-col items-center gap-0.5 py-1.5 px-4 rounded-xl transition-all #{request.path == dashboard_path ? 'text-sky-500' : 'text-slate-400'}" do %>
+          <%= link_to dashboard_path, class: "flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all #{request.path == dashboard_path ? 'text-sky-500' : 'text-slate-400'}" do %>
             <i class="fa-solid fa-compass text-lg"></i>
             <span class="text-[10px] font-medium">ค้นหา</span>
           <% end %>
-          <%= link_to chat_rooms_path, class: "flex flex-col items-center gap-0.5 py-1.5 px-4 rounded-xl transition-all #{request.path == chat_rooms_path ? 'text-sky-500' : 'text-slate-400'}" do %>
+          <%= link_to chat_rooms_path, class: "flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all #{request.path == chat_rooms_path ? 'text-sky-500' : 'text-slate-400'}" do %>
             <i class="fa-solid fa-comment text-lg"></i>
             <span class="text-[10px] font-medium">แชท</span>
           <% end %>
-          <%= link_to edit_profile_path, class: "flex flex-col items-center gap-0.5 py-1.5 px-4 rounded-xl transition-all #{request.path == edit_profile_path ? 'text-sky-500' : 'text-slate-400'}" do %>
+          <%= link_to edit_profile_path, class: "flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all #{request.path == edit_profile_path ? 'text-sky-500' : 'text-slate-400'}" do %>
             <i class="fa-solid fa-user text-lg"></i>
             <span class="text-[10px] font-medium">โปรไฟล์</span>
+          <% end %>
+          <%= button_to logout_path, method: :delete, class: "flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl transition-all text-slate-400 hover:text-rose-500", data: { turbo_method: :delete, turbo_confirm: "ต้องการออกจากระบบ?" } do %>
+            <i class="fa-solid fa-right-from-bracket text-lg"></i>
+            <span class="text-[10px] font-medium">ออก</span>
           <% end %>
         </div>
       </nav>

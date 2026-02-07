@@ -93,11 +93,50 @@
     </div>
   </div>
 
-  <!-- Turbo Stream Subscription -->
-  <%= turbo_stream_from "chat_room_#{@chat_room.id}" %>
+  <!-- Turbo Stream Subscription (per-user for correct alignment) -->
+  <%= turbo_stream_from "chat_room_#{@chat_room.id}_user_#{current_user.id}" %>
 
   <!-- Message Form -->
   <div class="bg-white border-t border-gray-100 px-4 py-3 safe-area-bottom shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.03)]">
+    <% unless @chat_room.is_ai_mode? %>
+      <!-- Review Section -->
+      <div class="mb-2">
+        <% if @my_review %>
+          <div class="flex items-center justify-center gap-1.5 text-xs text-gray-400 py-1">
+            <span>คุณให้คะแนน</span>
+            <% @my_review.rating.times do %><i class="fa-solid fa-star text-yellow-400 text-[10px]"></i><% end %>
+            <% (5 - @my_review.rating).times do %><i class="fa-regular fa-star text-gray-300 text-[10px]"></i><% end %>
+          </div>
+        <% else %>
+          <details class="group">
+            <summary class="flex items-center justify-center gap-1.5 text-xs text-sky-500 cursor-pointer hover:text-sky-600 py-1 select-none">
+              <i class="fa-solid fa-star text-yellow-400"></i>
+              <span>ให้คะแนนเพื่อนติว</span>
+              <i class="fa-solid fa-chevron-down text-[8px] group-open:rotate-180 transition-transform"></i>
+            </summary>
+            <div class="pt-2 pb-1 animate-slide-up">
+              <%= form_with url: chat_room_reviews_path(@chat_room), method: :post, class: "flex flex-col items-center gap-2" do |f| %>
+                <div class="flex gap-1" data-controller="rating">
+                  <% (1..5).each do |star| %>
+                    <label class="cursor-pointer">
+                      <input type="radio" name="rating" value="<%= star %>" class="peer hidden" required>
+                      <i class="fa-solid fa-star text-xl text-gray-300 peer-checked:text-yellow-400 hover:text-yellow-400 transition-colors"></i>
+                    </label>
+                  <% end %>
+                </div>
+                <div class="flex gap-2 w-full">
+                  <input type="text" name="comment" placeholder="ความคิดเห็น (ไม่บังคับ)" class="flex-1 px-3 py-2 rounded-xl bg-gray-100 text-xs border-0 focus:ring-2 focus:ring-sky-500 outline-none">
+                  <button type="submit" class="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-white rounded-xl text-xs font-medium transition-colors flex items-center gap-1">
+                    <i class="fa-solid fa-paper-plane text-[10px]"></i>
+                    ส่ง
+                  </button>
+                </div>
+              <% end %>
+            </div>
+          </details>
+        <% end %>
+      </div>
+    <% end %>
     <div id="message_form">
       <%= render partial: "messages/form", locals: { chat_room: @chat_room, message: @message } %>
     </div>

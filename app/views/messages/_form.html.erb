@@ -1,5 +1,5 @@
 <!-- Message Input Form -->
-<%= form_with model: message, url: chat_room_messages_path(chat_room), class: "flex items-end gap-2" do |f| %>
+<%= form_with model: message, url: chat_room_messages_path(chat_room), class: "flex items-center gap-2" do |f| %>
   <% if chat_room.is_ai_mode? %>
     <div class="flex-shrink-0">
       <span class="inline-flex items-center justify-center w-10 h-10 bg-amber-50 text-amber-500 rounded-xl border border-amber-200 cursor-default" title="Powered by Gemini AI">

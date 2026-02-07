@@ -22,6 +22,9 @@ class ChatRoomsController < ApplicationController
       @my_membership = @chat_room.chat_room_memberships.find_by(user: current_user)
       @other_user = @chat_room.other_member(current_user)
       @other_revealed = @chat_room.identity_revealed?(@other_user) if @other_user
+      @my_review = Review.find_by(reviewer: current_user, chat_room: @chat_room)
+      @other_user_avg_rating = @other_user&.average_rating || 0.0
+      @other_user_review_count = @other_user&.review_count || 0
     end
   end
 

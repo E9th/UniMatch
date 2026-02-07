@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_07_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_07_100001) do
   create_table "chat_room_memberships", force: :cascade do |t|
     t.integer "chat_room_id", null: false
     t.datetime "created_at", null: false
@@ -41,6 +41,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_07_000001) do
     t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
+  create_table "reviews", force: :cascade do |t|
+    t.integer "chat_room_id", null: false
+    t.text "comment"
+    t.datetime "created_at", null: false
+    t.integer "rating", null: false
+    t.integer "reviewee_id", null: false
+    t.integer "reviewer_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_room_id"], name: "index_reviews_on_chat_room_id"
+    t.index ["reviewee_id"], name: "index_reviews_on_reviewee_id"
+    t.index ["reviewer_id", "chat_room_id"], name: "index_reviews_on_reviewer_id_and_chat_room_id", unique: true
+    t.index ["reviewer_id"], name: "index_reviews_on_reviewer_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "available_time"
     t.text "bio"
@@ -60,4 +74,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_07_000001) do
   add_foreign_key "chat_rooms", "users"
   add_foreign_key "messages", "chat_rooms"
   add_foreign_key "messages", "users"
+  add_foreign_key "reviews", "chat_rooms"
+  add_foreign_key "reviews", "users", column: "reviewee_id"
+  add_foreign_key "reviews", "users", column: "reviewer_id"
 end

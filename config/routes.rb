@@ -34,6 +34,7 @@ Rails.application.routes.draw do
       post :reveal_identity
     end
     resources :messages, only: [:create]
+    resources :reviews, only: [:create]
   end
   post "chat_rooms/ai", to: "chat_rooms#create_ai_room", as: :create_ai_chat
 

@@ -10,12 +10,14 @@ class Message < ApplicationRecord
     self.role ||= "user"
   end
 
-  # Broadcast ข้อความใหม่ผ่าน Turbo Stream
+  # Broadcast ข้อความใหม่ผ่าน Turbo Stream (per-user สำหรับ alignment ที่ถูกต้อง)
   after_create_commit do
-    broadcast_append_to "chat_room_#{chat_room_id}",
-      target: "messages",
-      partial: "messages/message",
-      locals: { message: self }
+    chat_room.members.each do |member|
+      broadcast_append_to "chat_room_#{chat_room_id}_user_#{member.id}",
+        target: "messages",
+        partial: "messages/message",
+        locals: { message: self, viewing_user_id: member.id }
+    end
   end
 
   def from_ai?

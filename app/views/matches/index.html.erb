@@ -38,9 +38,14 @@
                   <span class="inline-flex items-center gap-1 bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-semibold border border-green-200">
                     <i class="fa-solid fa-check-circle"></i> <%= score %>%
                   </span>
-                  <!-- Star Rating (simulated) -->
+                  <!-- Star Rating (real from reviews) -->
+                  <% avg = match.average_rating %>
                   <span class="bg-yellow-50 text-yellow-700 px-2 py-0.5 rounded-md border border-yellow-100 flex items-center gap-1">
-                    <i class="fa-solid fa-star text-yellow-400"></i> <%= (4.0 + (match.id % 10) * 0.1).round(1) %>
+                    <i class="fa-solid fa-star text-yellow-400"></i>
+                    <%= avg > 0 ? avg : "ใหม่" %>
+                    <% if match.review_count > 0 %>
+                      <span class="text-gray-400 text-[10px]">(<%= match.review_count %>)</span>
+                    <% end %>
                   </span>
                 </div>
 
