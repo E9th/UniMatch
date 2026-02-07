@@ -19,12 +19,16 @@
           <%= link_to chat_room_path(room), class: "block bg-white rounded-xl border border-gray-100 shadow-sm p-4 hover:border-sky-200 hover:shadow-md transition-all duration-200 group" do %>
             <div class="flex items-center gap-3">
               <!-- Avatar -->
+              <% other = room.is_ai_mode? ? nil : room.other_member(current_user) %>
+              <% revealed = other && room.identity_revealed?(other) %>
               <div class="relative flex-shrink-0">
                 <div class="w-12 h-12 rounded-full overflow-hidden ring-2 ring-gray-50">
                   <% if room.is_ai_mode? %>
                     <div class="w-full h-full bg-amber-500 flex items-center justify-center">
                       <i class="fa-solid fa-robot text-white text-lg"></i>
                     </div>
+                  <% elsif revealed %>
+                    <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=<%= other.name %>&backgroundColor=b6e3f4" alt="avatar" class="w-full h-full object-cover">
                   <% else %>
                     <img src="https://api.dicebear.com/9.x/shapes/svg?seed=buddy<%= room.id %>&backgroundColor=e0e7ff" alt="avatar" class="w-full h-full object-cover">
                   <% end %>
@@ -38,7 +42,7 @@
               <div class="flex-1 min-w-0">
                 <div class="flex justify-between items-baseline">
                   <h3 class="font-semibold text-gray-800 text-sm group-hover:text-sky-500 transition-colors truncate">
-                    <%= room.is_ai_mode? ? 'AI ติวเตอร์' : 'เพื่อนติวปริศนา' %>
+                    <%= room.is_ai_mode? ? 'AI ติวเตอร์' : (revealed ? other.name : 'เพื่อนติวปริศนา') %>
                   </h3>
                   <% if room.last_message %>
                     <span class="text-[10px] text-gray-400 whitespace-nowrap ml-2"><%= time_ago_in_words(room.last_message.created_at) %></span>

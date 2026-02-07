@@ -1,15 +1,45 @@
 <!-- Message Input Form -->
-<%= form_with model: message, url: chat_room_messages_path(chat_room), class: "flex items-center gap-2" do |f| %>
-  <div class="relative flex-1">
+<%= form_with model: message, url: chat_room_messages_path(chat_room), class: "flex items-center gap-2", data: { controller: "message image-preview" } do |f| %>
+  <div class="relative flex-1" data-controller="emoji-picker">
+    <!-- Image Preview -->
+    <div class="hidden mb-2 relative inline-block" data-image-preview-target="preview">
+      <img src="" alt="preview" class="max-h-32 rounded-xl border border-gray-200" data-image-preview-target="img">
+      <button type="button" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full text-xs flex items-center justify-center shadow-md hover:bg-rose-600"
+              data-action="click->image-preview#remove">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
     <%= f.text_area :content,
         rows: 1,
-        class: "w-full pl-4 pr-10 py-3 rounded-2xl border-0 bg-gray-100 focus:ring-2 focus:ring-sky-500 focus:bg-white outline-none transition-all resize-none text-sm",
+        class: "w-full pl-4 pr-16 py-3 rounded-2xl border-0 bg-gray-100 focus:ring-2 focus:ring-sky-500 focus:bg-white outline-none transition-all resize-none text-sm",
         placeholder: chat_room.is_ai_mode? ? "ถามอะไรก็ได้เกี่ยวกับการเรียน..." : "พิมพ์ข้อความ...",
         autofocus: true,
-        data: { action: "keydown->message#submitOnEnter" } %>
-    <button type="button" class="absolute right-3 bottom-3 text-gray-400 hover:text-gray-600">
-      <i class="fa-regular fa-face-smile"></i>
-    </button>
+        data: { action: "keydown->message#submitOnEnter", emoji_picker_target: "input" } %>
+    <div class="absolute right-3 bottom-3 flex items-center gap-1.5">
+      <% unless chat_room.is_ai_mode? %>
+        <label class="cursor-pointer text-gray-400 hover:text-sky-500 transition-colors">
+          <i class="fa-solid fa-image text-sm"></i>
+          <%= f.file_field :image, accept: "image/*", class: "hidden", data: { action: "change->image-preview#preview", image_preview_target: "fileInput" } %>
+        </label>
+      <% end %>
+      <button type="button" class="text-gray-400 hover:text-amber-500 transition-colors"
+              data-action="click->emoji-picker#toggle">
+        <i class="fa-regular fa-face-smile"></i>
+      </button>
+    </div>
+    <!-- Emoji Picker Dropdown -->
+    <div class="hidden absolute bottom-12 right-0 bg-white rounded-2xl shadow-xl border border-gray-200 p-3 w-72 z-50"
+         data-emoji-picker-target="menu">
+      <div class="grid grid-cols-8 gap-1 max-h-44 overflow-y-auto no-scrollbar">
+        <% %w[😀 😂 🤣 😊 😍 🥰 😎 🤓 😅 😆 😉 😋 😘 🤗 🤔 🤫 😱 😭 😤 🥺 😴 🤯 🥳 😇 👍 👎 👏 🙏 💪 ✌️ 🤝 👋 ❤️ 🔥 ⭐ 💯 ✅ ❌ 💡 📚 ✍️ 📝 🎓 🧠 💻 📖 🏆 🎉].each do |emoji| %>
+          <button type="button" class="text-xl hover:bg-gray-100 rounded-lg p-1 transition-colors text-center"
+                  data-action="click->emoji-picker#select"
+                  data-emoji="<%= emoji %>">
+            <%= emoji %>
+          </button>
+        <% end %>
+      </div>
+    </div>
   </div>
   <button type="submit"
           class="flex-shrink-0 w-10 h-10 bg-sky-500 hover:bg-sky-600 text-white rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform">

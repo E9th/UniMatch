@@ -97,4 +97,23 @@ class MessageTest < ActiveSupport::TestCase
   test "belongs to user" do
     assert_equal @somchai, @user_msg.user
   end
+
+  # ==================== Image Attachment ====================
+
+  test "message with image and no content is valid" do
+    msg = Message.new(user: @somchai, chat_room: @chat_room, role: "user")
+    msg.image.attach(io: StringIO.new("fake image data"), filename: "test.png", content_type: "image/png")
+    assert msg.valid?, "Message with image should be valid without content: #{msg.errors.full_messages}"
+  end
+
+  test "message without content and without image is invalid" do
+    msg = Message.new(user: @somchai, chat_room: @chat_room, role: "user")
+    assert_not msg.valid?
+  end
+
+  test "message with both content and image is valid" do
+    msg = Message.new(content: "Look at this!", user: @somchai, chat_room: @chat_room, role: "user")
+    msg.image.attach(io: StringIO.new("fake image data"), filename: "test.png", content_type: "image/png")
+    assert msg.valid?
+  end
 end

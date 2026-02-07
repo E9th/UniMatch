@@ -2,7 +2,7 @@ class ChatRoomsController < ApplicationController
   before_action :require_login
 
   def index
-    @chat_rooms = current_user.chat_rooms.includes(:messages, :members).order(updated_at: :desc)
+    @chat_rooms = current_user.chat_rooms.includes(:messages, :members, :chat_room_memberships).order(updated_at: :desc)
   end
 
   def show

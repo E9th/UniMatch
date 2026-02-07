@@ -41,7 +41,14 @@
              'bg-white border border-gray-100 text-gray-700 rounded-bl-none shadow-sm'
            end %>
         <div class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed msg-enter <%= bubble_class %>">
-          <%= simple_format(message.content) %>
+          <% if message.image.attached? %>
+            <div class="mb-1">
+              <%= image_tag rails_blob_url(message.image, only_path: true), class: "max-w-xs max-h-60 rounded-xl cursor-pointer", alt: "shared image", loading: "lazy", onclick: "window.open(this.src, '_blank')" %>
+            </div>
+          <% end %>
+          <% if message.content.present? %>
+            <%= simple_format(message.content) %>
+          <% end %>
         </div>
       </div>
     </div>

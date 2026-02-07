@@ -2,7 +2,9 @@ class Message < ApplicationRecord
   belongs_to :user, optional: true # AI messages don't have a user
   belongs_to :chat_room
 
-  validates :content, presence: true
+  has_one_attached :image
+
+  validates :content, presence: true, unless: :image_attached?
   validates :role, inclusion: { in: %w[user assistant system] }
 
   # Default role
@@ -30,5 +32,9 @@ class Message < ApplicationRecord
 
   def sender_name
     from_ai? ? "AI ติวเตอร์" : (user&.name || "เพื่อนติว")
+  end
+
+  def image_attached?
+    image.attached?
   end
 end

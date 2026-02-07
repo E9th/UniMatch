@@ -30,6 +30,17 @@ class ChatRoomsControllerTest < ActionDispatch::IntegrationTest
     assert_match(/เพื่อนติวปริศนา/, response.body)
   end
 
+  test "index shows revealed name when partner identity is revealed" do
+    # Make somying reveal her identity
+    membership = ChatRoomMembership.find_by(user: @somying, chat_room: @human_room)
+    membership.update!(identity_revealed: true)
+
+    sign_in_as(@somchai)
+    get chat_rooms_path
+    assert_response :success
+    assert_match @somying.name, response.body
+  end
+
   # ==================== Show ====================
 
   test "show requires login" do
